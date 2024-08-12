@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom';
 import { useDarkMode } from '../context/DarkModeContext';
 import { useSidebar } from '../context/SidebarContext';
 
+// Importing Assets
+import profile from '../assets/pic-1.jpg';
+
 export default function Navbar() {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
     const { sidebarActive, toggleSidebar } = useSidebar();
@@ -88,10 +91,10 @@ export default function Navbar() {
                 </div>
 
                 <div
-                    className={`absolute top-full right-8 rounded-lg p-4 text-center overflow-hidden transform transition-transform duration-200 ease-linear w-80 ${profileActive ? 'scale-100' : 'scale-0'} dark:bg-gray-900 bg-white text-black dark:text-white`}
+                    className={`absolute top-full right-8 rounded-lg p-4 text-center flex flex-col items-center overflow-hidden transform transition-transform duration-200 ease-linear w-80 ${profileActive ? 'scale-100' : 'scale-0'} dark:bg-gray-900 bg-neutral-100 text-black dark:text-white`}
                     ref={profileRef}
                 >
-                    <img src="images/pic-1.jpg" className="h-40 w-40 rounded-full object-contain mb-4" alt="" />
+                    <img src={profile} className="h-40 w-40 rounded-full object-contain mb-4" alt="" />
                     <h3 className="text-2xl text-black truncate">shaikh anas</h3>
                     <p className="text-xl text-gray-600">studen</p>
                     <Link to="profile.html" className="block bg-purple-600 text-white text-lg py-2 px-6 rounded mt-4">view profile</Link>
