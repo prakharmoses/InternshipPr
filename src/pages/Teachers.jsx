@@ -93,7 +93,7 @@ export default function Teachers() {
                       </tbody>
                     </table>
                     <div className="text-center my-3">
-                      <Link className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium" href={`/profile/${teacher.id}`}>View Profile</Link>
+                      <Link className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium" to={`/profile/${teacher.id}`}>View Profile</Link>
                     </div>
 
                   </div>

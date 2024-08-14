@@ -23,6 +23,43 @@ export default function Profile() {
     role: 'Tutor',
     avatar: 'https://pagedone.io/asset/uploads/1705471668.png',
     cover: 'https://pagedone.io/asset/uploads/1705473908.png',
+    about: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum, voluptate. Nihil quas quidem totam sit, in illo commodi odit reprehenderit, amet eveniet ullam optio facilis deserunt doloribus modi omnis provident deleniti iure quasi voluptas facere similique doloremque? Iste aperiam iure animi saepe! Ea, nobis. Rerum fugit quam corporis assumenda veniam! Aspernatur veniam voluptatum dignissimos nesciunt praesentium corporis nostrum quam ex sequi molestias. Consequatur amet quam eaque earum optio sunt suscipit. Corporis quos labore eveniet aliquam quam ad exercitationem voluptas ullam facere consequuntur omnis ipsum beatae odit fuga, iure doloribus magnam, eligendi fugiat, enim vel. Itaque et alias molestias repellat quam. A voluptate magnam neque cum quidem eos, veritatis nihil explicabo. Facere reiciendis iste cupiditate sed qui suscipit facilis nemo dolorem expedita ad, repellat eius officiis praesentium! In assumenda consectetur quasi. Enim quam iste voluptate ex. Ullam ad odit repellat obcaecati fuga eveniet, dolorum aliquam placeat perferendis saepe nobis similique iure tenetur, animi dolores. Ipsum, atque sequi, totam tempore molestias assumenda nam voluptatibus accusantium mollitia cumque ducimus! Quos earum atque, est pariatur soluta, culpa ipsam corrupti, quidem accusantium facere nobis officia inventore. Incidunt, necessitatibus non porro esse ducimus iste molestias aperiam pariatur ab nihil dolorem debitis impedit, dignissimos illum doloribus culpa.',
+    likes: [
+      { id: 1, title: 'JavaScript' },
+      { id: 2, title: 'React' },
+      { id: 3, title: 'Node.js' },
+      { id: 4, title: 'Express' },
+      { id: 5, title: 'MongoDB' },
+      { id: 6, title: 'Python' },
+      { id: 7, title: 'Django' },
+      { id: 8, title: 'Flask' },
+      { id: 9, title: 'PostgreSQL' },
+      { id: 10, title: 'SQLite' },
+    ],
+    comments: [
+      { id: 1, title: 'Great work!' },
+      { id: 2, title: 'Keep it up!' },
+      { id: 3, title: 'Nice job!' },
+      { id: 4, title: 'Awesome!' },
+      { id: 5, title: 'Fantastic!' },
+      { id: 6, title: 'Good job!' },
+      { id: 7, title: 'Well done!' },
+      { id: 8, title: 'Excellent!' },
+      { id: 9, title: 'Brilliant!' },
+      { id: 10, title: 'Superb!' },
+    ],
+    playlists: [
+      { id: 1, title: 'JavaScript' },
+      { id: 2, title: 'React' },
+      { id: 3, title: 'Node.js' },
+      { id: 4, title: 'Express' },
+      { id: 5, title: 'MongoDB' },
+      { id: 6, title: 'Python' },
+      { id: 7, title: 'Django' },
+      { id: 8, title: 'Flask' },
+      { id: 9, title: 'PostgreSQL' },
+      { id: 10, title: 'SQLite' },
+    ],
   });
 
   // Definng functions
@@ -68,26 +105,27 @@ export default function Profile() {
           <div className="w-full max-w-7xl mx-auto px-6 md:px-8 mt-16">
             <div className="p-6">
               <h3 className="font-manrope font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">About</h3>
-              <p className="font-normal text-base leading-7 text-gray-500 dark:text-gray-300">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris.</p>
+              <p className="font-normal text-base leading-7 text-gray-500 dark:text-gray-300">{user.about}</p>
             </div>
           </div>
         )}
       </section>
+
       {edit && (
         <Modal title="Profile" closeModal={() => setEdit(false)}>
-          <h2 className="text-grey text-sm mb-4 dark:text-gray-400">Create Profile</h2>
+          <h2 className="text-grey text-sm mb-4 text-gray-600 dark:text-gray-400">Create Profile</h2>
           <form>
             <div
               className="w-full rounded-sm bg-[url('https://images.unsplash.com/photo-1449844908441-8829872d2607?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxob21lfGVufDB8MHx8fDE3MTA0MDE1NDZ8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat items-center">
               <div
-                className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-[url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat">
+                className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-700/80 dark:bg-blue-300/20 rounded-full bg-[url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat">
 
-                <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
+                <div className="bg-black dark:bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
 
                   <input type="file" name="profile" id="upload_profile" hidden required />
 
                   <label for="upload_profile">
-                    <svg data-slot="icon" className="w-6 h-5 text-blue-700" fill="none"
+                    <svg data-slot="icon" className="w-6 h-5 text-blue-300 dark:text-blue-700 cursor-pointer" fill="none"
                       stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round"
@@ -104,10 +142,10 @@ export default function Profile() {
                 <input type="file" name="profile" id="upload_cover" hidden required />
 
                 <div
-                  className="bg-white flex items-center gap-1 rounded-tl-md px-2 text-center font-semibold">
-                  <label for="upload_cover" className="inline-flex items-center gap-1 cursor-pointer">Cover
+                  className="bg-black dark:bg-white flex items-center gap-1 rounded-tl-md px-2 text-center font-semibold">
+                  <label for="upload_cover" className="inline-flex items-center gap-1 cursor-pointer text-white dark:text-black">Cover
 
-                    <svg data-slot="icon" className="w-6 h-5 text-blue-700" fill="none" stroke-width="1.5"
+                    <svg data-slot="icon" className="w-6 h-5 text-blue-300 dark:text-blue-700" fill="none" stroke-width="1.5"
                       stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                       aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round"
@@ -122,37 +160,37 @@ export default function Profile() {
 
               </div>
             </div>
-            <h2 className="text-center mt-1 font-semibold dark:text-gray-300">Upload Profile and Cover Image
+            <h2 className="text-center mt-1 font-semibold text-gray-700 dark:text-gray-300">Upload Profile and Cover Image
             </h2>
             <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
               <div className="w-full  mb-4 mt-6">
-                <label for="" className="mb-2 dark:text-gray-300">First Name</label>
+                <label for="" className="mb-2 text-gray-700 dark:text-gray-300">First Name</label>
                 <input type="text"
-                  className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                  className="mt-2 p-4 w-full border-2 rounded-lg text-gray-800 dark:text-gray-200 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800"
                   placeholder="First Name" />
               </div>
               <div className="w-full  mb-4 lg:mt-6">
-                <label for="" className=" dark:text-gray-300">Last Name</label>
-                <input type="text"
-                  className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                  placeholder="Last Name" />
+                <label for="" className="text-gray-700 dark:text-gray-300">Email</label>
+                <input type="email"
+                  className="mt-2 p-4 w-full border-2 rounded-lg text-gray-800 dark:text-gray-200 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-8000"
+                  placeholder="Email" />
               </div>
             </div>
 
             <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
               <div className="w-full">
-                <h3 className="dark:text-gray-300 mb-2">Sex</h3>
+                <h3 className="text-gray-700 dark:text-gray-300 mb-2">Sex</h3>
                 <select
-                  className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800">
+                  className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 text-gray-800 dark:text-gray-200 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800">
                   <option disabled value="">Select Sex</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                 </select>
               </div>
               <div className="w-full">
-                <h3 className="dark:text-gray-300 mb-2">Date Of Birth</h3>
+                <h3 className="text-gray-700 dark:text-gray-300 mb-2">Date Of Birth</h3>
                 <input type="date"
-                  className="text-grey p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800" />
+                  className="text-grey p-4 w-full border-2 rounded-lg text-gray-800 dark:text-gray-200 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800" />
               </div>
             </div>
             <div className="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">

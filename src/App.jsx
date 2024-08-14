@@ -10,6 +10,7 @@ import { AccountProvider } from './context/AccountContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
+import ChatBot from './components/ChatBot';
 
 // Importing Pages
 import Home from './pages/Home';
@@ -59,6 +60,7 @@ function MainLayout() {
     <>
       <Navbar />
       <Sidebar />
+      <ChatBot />
       <main>
         <Outlet /> {/* Renders the matched child route component */}
       </main>
