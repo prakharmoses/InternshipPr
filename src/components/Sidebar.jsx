@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { FaTimes, FaHome, FaQuestion, FaGraduationCap, FaChalkboardTeacher, FaHeadset } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Importing Context
 import { useSidebar } from '../context/SidebarContext';
@@ -9,6 +9,7 @@ import { useSidebar } from '../context/SidebarContext';
 import profile from '../assets/pic-1.jpg';
 
 export default function Sidebar() {
+    const navigate = useNavigate();
     const { sidebarActive, setSidebarActive, toggleSidebar } = useSidebar();
 
     // Defining functions
@@ -47,7 +48,10 @@ export default function Sidebar() {
                     <img src={profile} className="h-24 w-24 rounded-full mx-auto" alt="Profile" />
                     <h3 className="text-xl text-gray-900 dark:text-gray-100 mt-2">Shaikh Anas</h3>
                     <p className="text-gray-600 dark:text-gray-400">Student</p>
-                    <button className="text-white bg-purple-600 rounded-lg py-2 px-6 text-xl">View Profile</button>
+                    <button
+                        onClick={() => navigate('/profile/1')}
+                        className="text-white bg-purple-600 rounded-lg py-2 px-6 text-xl"
+                    >View Profile</button>
                 </div>
                 <nav className="flex flex-col">
                     <Link to="/" className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">

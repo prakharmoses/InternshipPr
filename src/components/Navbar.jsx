@@ -41,7 +41,7 @@ export default function Navbar() {
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 h-20 border-b dark:bg-gray-900 dark:border-gray-700 bg-white border-gray-200 transition-transform duration-300 ease-in-out ${sidebarActive ? 'ml-72' : 'ml-0'}`}>
             <section className="flex items-center justify-between p-6 h-20 max-w-screen-xl mx-auto text-black dark:text-white">
-                <Link to="/" className="text-3xl font-semibold">Angirasoft</Link>
+                <Link to="/" className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Angirasoft</Link>
 
                 <form
                     className="flex items-center gap-4 w-1/2 rounded-lg p-4 h-12 dark:bg-gray-700 bg-gray-100"
@@ -95,7 +95,7 @@ export default function Navbar() {
                     ref={profileRef}
                 >
                     <img src={profile} className="h-40 w-40 rounded-full object-contain mb-4" alt="" />
-                    <h3 className="text-2xl text-black truncate">shaikh anas</h3>
+                    <h3 className="text-2xl text-black dark:text-white truncate">shaikh anas</h3>
                     <p className="text-xl text-gray-600">studen</p>
                     <Link to="profile.html" className="block bg-purple-600 text-white text-lg py-2 px-6 rounded mt-4">view profile</Link>
                     <div className="flex gap-4 mt-4">

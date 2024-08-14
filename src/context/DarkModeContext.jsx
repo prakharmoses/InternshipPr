@@ -3,14 +3,11 @@ import React, { createContext, useState, useContext } from 'react';
 
 const DarkModeContext = createContext();
 
-export function useDarkMode() {
-  return useContext(DarkModeContext);
-}
-
 export function DarkModeProvider({ children }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(JSON.parse(localStorage.getItem('darkMode') || false));
 
   const toggleDarkMode = () => {
+    localStorage.setItem('darkMode', !isDarkMode);
     setIsDarkMode(prevMode => !prevMode);
   };
 
@@ -21,4 +18,14 @@ export function DarkModeProvider({ children }) {
       </div>
     </DarkModeContext.Provider>
   );
+}
+
+export function useDarkMode() {
+  const context = useContext(DarkModeContext);
+
+  if (!context) {
+    throw new Error('useDarkMode must be used within a DarkModeProvider');
+  }
+
+  return context;
 }
