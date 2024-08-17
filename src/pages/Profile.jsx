@@ -21,8 +21,8 @@ export default function Profile() {
     name: 'Emma Smith',
     email: 'emmasmith@gmail.com',
     role: 'Tutor',
-    avatar: 'https://pagedone.io/asset/uploads/1705471668.png',
-    cover: 'https://pagedone.io/asset/uploads/1705473908.png',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080',
+    cover: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxob21lfGVufDB8MHx8fDE3MTA0MDE1NDZ8MA&ixlib=rb-4.0.3&q=80&w=1080',
     about: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum, voluptate. Nihil quas quidem totam sit, in illo commodi odit reprehenderit, amet eveniet ullam optio facilis deserunt doloribus modi omnis provident deleniti iure quasi voluptas facere similique doloremque? Iste aperiam iure animi saepe! Ea, nobis. Rerum fugit quam corporis assumenda veniam! Aspernatur veniam voluptatum dignissimos nesciunt praesentium corporis nostrum quam ex sequi molestias. Consequatur amet quam eaque earum optio sunt suscipit. Corporis quos labore eveniet aliquam quam ad exercitationem voluptas ullam facere consequuntur omnis ipsum beatae odit fuga, iure doloribus magnam, eligendi fugiat, enim vel. Itaque et alias molestias repellat quam. A voluptate magnam neque cum quidem eos, veritatis nihil explicabo. Facere reiciendis iste cupiditate sed qui suscipit facilis nemo dolorem expedita ad, repellat eius officiis praesentium! In assumenda consectetur quasi. Enim quam iste voluptate ex. Ullam ad odit repellat obcaecati fuga eveniet, dolorum aliquam placeat perferendis saepe nobis similique iure tenetur, animi dolores. Ipsum, atque sequi, totam tempore molestias assumenda nam voluptatibus accusantium mollitia cumque ducimus! Quos earum atque, est pariatur soluta, culpa ipsam corrupti, quidem accusantium facere nobis officia inventore. Incidunt, necessitatibus non porro esse ducimus iste molestias aperiam pariatur ab nihil dolorem debitis impedit, dignissimos illum doloribus culpa.',
     likes: [
       { id: 1, title: 'JavaScript' },
@@ -62,6 +62,14 @@ export default function Profile() {
     ],
   });
 
+  const avatarStyle = {
+    backgroundImage: `url(${user.avatar})`,
+  };
+  
+  const coverStyle = {
+    backgroundImage: `url(${user.cover})`,
+  };
+
   // Definng functions
   useEffect(() => {
     // Fetch user data from API
@@ -74,12 +82,12 @@ export default function Profile() {
         <img
           src={user.cover}
           alt="cover-image"
-          className="w-full absolute top-0 left-0 z-0 h-72"
+          className="w-full absolute top-0 left-0 z-0 h-72 object-cover"
         />
         <div className="w-full max-w-7xl mx-auto px-6 md:px-8 relative top-9">
           <div className="flex items-center justify-center sm:justify-start relative z-10 mb-5">
             <img src={user.avatar} alt="user-avatar-image"
-              className="border-4 border-solid border-white dark:border-black rounded-full" />
+              className="border-4 border-solid border-white dark:border-black rounded-full object-cover w-[8.813rem] h-[8.813rem]" />
           </div>
           <div className="flex items-center justify-center flex-col sm:flex-row max-sm:gap-5 sm:justify-between mb-5">
             <div className="block">
@@ -116,9 +124,13 @@ export default function Profile() {
           <h2 className="text-grey text-sm mb-4 text-gray-600 dark:text-gray-400">Create Profile</h2>
           <form>
             <div
-              className="w-full rounded-sm bg-[url('https://images.unsplash.com/photo-1449844908441-8829872d2607?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxob21lfGVufDB8MHx8fDE3MTA0MDE1NDZ8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat items-center">
+              className={`w-full rounded-sm bg-cover bg-center bg-no-repeat items-center`}
+              style={coverStyle}
+            >
               <div
-                className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-700/80 dark:bg-blue-300/20 rounded-full bg-[url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat">
+                className={`mx-auto flex justify-center w-[141px] h-[141px] bg-blue-700/80 dark:bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat`}
+                style={avatarStyle}
+              >
 
                 <div className="bg-black dark:bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
 
@@ -193,12 +205,19 @@ export default function Profile() {
                   className="text-grey p-4 w-full border-2 rounded-lg text-gray-800 dark:text-gray-200 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800" />
               </div>
             </div>
+            <div className="w-full  mb-4 lg:mt-6">
+              <label for="" className="text-gray-700 dark:text-gray-300">About Me</label>
+              <textarea type="email"
+                className="mt-2 p-4 w-full border-2 rounded-lg text-gray-800 dark:text-gray-200 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-8000"
+                placeholder="Email">{user.about}</textarea>
+            </div>
             <div className="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
               <button type="submit" className="w-full p-4">Submit</button>
             </div>
           </form>
         </Modal>
-      )}
-    </main>
+      )
+      }
+    </main >
   )
 }
