@@ -39,7 +39,7 @@ function App() {
                 <Route path="teachers" element={<Teachers />} />
                 <Route path="course/:courseId" element={<CourseDetails />} />
                 <Route path="profile/:profileId" element={<Profile />} />
-                <Route path="video/:videoLink" element={<VideoPage />} />
+                <Route path="content/:contentLink" element={<VideoPage />} />
               </Route>
 
               {/* NotFound page layout without Navbar, Sidebar, Footer */}

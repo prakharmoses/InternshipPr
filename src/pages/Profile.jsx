@@ -8,6 +8,7 @@ import { useAccount } from '../context/AccountContext';
 
 // Importing Components
 import Modal from '../components/Modal';
+import CourseCard from '../components/CourseCard';
 
 export default function Profile() {
   const { sidebarActive } = useSidebar();
@@ -25,50 +26,60 @@ export default function Profile() {
     cover: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxob21lfGVufDB8MHx8fDE3MTA0MDE1NDZ8MA&ixlib=rb-4.0.3&q=80&w=1080',
     about: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum, voluptate. Nihil quas quidem totam sit, in illo commodi odit reprehenderit, amet eveniet ullam optio facilis deserunt doloribus modi omnis provident deleniti iure quasi voluptas facere similique doloremque? Iste aperiam iure animi saepe! Ea, nobis. Rerum fugit quam corporis assumenda veniam! Aspernatur veniam voluptatum dignissimos nesciunt praesentium corporis nostrum quam ex sequi molestias. Consequatur amet quam eaque earum optio sunt suscipit. Corporis quos labore eveniet aliquam quam ad exercitationem voluptas ullam facere consequuntur omnis ipsum beatae odit fuga, iure doloribus magnam, eligendi fugiat, enim vel. Itaque et alias molestias repellat quam. A voluptate magnam neque cum quidem eos, veritatis nihil explicabo. Facere reiciendis iste cupiditate sed qui suscipit facilis nemo dolorem expedita ad, repellat eius officiis praesentium! In assumenda consectetur quasi. Enim quam iste voluptate ex. Ullam ad odit repellat obcaecati fuga eveniet, dolorum aliquam placeat perferendis saepe nobis similique iure tenetur, animi dolores. Ipsum, atque sequi, totam tempore molestias assumenda nam voluptatibus accusantium mollitia cumque ducimus! Quos earum atque, est pariatur soluta, culpa ipsam corrupti, quidem accusantium facere nobis officia inventore. Incidunt, necessitatibus non porro esse ducimus iste molestias aperiam pariatur ab nihil dolorem debitis impedit, dignissimos illum doloribus culpa.',
     likes: [
-      { id: 1, title: 'JavaScript' },
-      { id: 2, title: 'React' },
-      { id: 3, title: 'Node.js' },
-      { id: 4, title: 'Express' },
-      { id: 5, title: 'MongoDB' },
-      { id: 6, title: 'Python' },
-      { id: 7, title: 'Django' },
-      { id: 8, title: 'Flask' },
-      { id: 9, title: 'PostgreSQL' },
-      { id: 10, title: 'SQLite' },
+      { id: 1, title: 'JavaScript', image: 'https://img.icons8.com/color/452/javascript.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 1 },
+      { id: 2, title: 'React', image: 'https://img.icons8.com/color/452/react-native.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 2 },
+      { id: 3, title: 'Node.js', image: 'https://img.icons8.com/color/452/nodejs.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 3 },
+      { id: 4, title: 'Express', image: 'https://img.icons8.com/color/452/express.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 4 },
+      { id: 5, title: 'MongoDB', image: 'https://img.icons8.com/color/452/mongodb.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 5 },
+      { id: 6, title: 'Python', image: 'https://img.icons8.com/color/452/python.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 6 },
+      { id: 7, title: 'Django', image: 'https://img.icons8.com/color/452/django.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 7 },
+      { id: 8, title: 'Flask', image: 'https://img.icons8.com/color/452/flask.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 8 },
+      { id: 9, title: 'PostgreSQL', image: 'https://img.icons8.com/color/452/postgreesql.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 9 },
+      { id: 10, title: 'SQLite', image: 'https://img.icons8.com/color/452/sql.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 10 },
     ],
     comments: [
-      { id: 1, title: 'Great work!' },
-      { id: 2, title: 'Keep it up!' },
-      { id: 3, title: 'Nice job!' },
-      { id: 4, title: 'Awesome!' },
-      { id: 5, title: 'Fantastic!' },
-      { id: 6, title: 'Good job!' },
-      { id: 7, title: 'Well done!' },
-      { id: 8, title: 'Excellent!' },
-      { id: 9, title: 'Brilliant!' },
-      { id: 10, title: 'Superb!' },
+      { id: 1, title: 'Great work!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 1 },
+      { id: 2, title: 'Keep it up!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 2 },
+      { id: 3, title: 'Nice job!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 3 },
+      { id: 4, title: 'Awesome!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 4 },
+      { id: 5, title: 'Fantastic!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 5 },
+      { id: 6, title: 'Good job!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 6 },
+      { id: 7, title: 'Well done!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 7 },
+      { id: 8, title: 'Excellent!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 8 },
+      { id: 9, title: 'Brilliant!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 9 },
+      { id: 10, title: 'Superb!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 10 },
     ],
     playlists: [
-      { id: 1, title: 'JavaScript' },
-      { id: 2, title: 'React' },
-      { id: 3, title: 'Node.js' },
-      { id: 4, title: 'Express' },
-      { id: 5, title: 'MongoDB' },
-      { id: 6, title: 'Python' },
-      { id: 7, title: 'Django' },
-      { id: 8, title: 'Flask' },
-      { id: 9, title: 'PostgreSQL' },
-      { id: 10, title: 'SQLite' },
+      { id: 1, title: 'JavaScript', image: 'https://img.icons8.com/color/452/javascript.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 2, title: 'React', image: 'https://img.icons8.com/color/452/react-native.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 3, title: 'Node.js', image: 'https://img.icons8.com/color/452/nodejs.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 4, title: 'Express', image: 'https://img.icons8.com/color/452/express.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 5, title: 'MongoDB', image: 'https://img.icons8.com/color/452/mongodb.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 6, title: 'Python', image: 'https://img.icons8.com/color/452/python.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 7, title: 'Django', image: 'https://img.icons8.com/color/452/django.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 8, title: 'Flask', image: 'https://img.icons8.com/color/452/flask.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 9, title: 'PostgreSQL', image: 'https://img.icons8.com/color/452/postgreesql.png', profileImg: 'https://img.icons8.com/color/452/like' },
+      { id: 10, title: 'SQLite', image: 'https://img.icons8.com/color/452/sql.png', profileImg: 'https://img.icons8.com/color/452/like' },
     ],
   });
 
   const avatarStyle = {
     backgroundImage: `url(${user.avatar})`,
   };
-  
+
   const coverStyle = {
     backgroundImage: `url(${user.cover})`,
   };
+
+  const handleRemovePlaylist = (id) => {
+    const updatedPlaylists = [...user.playlists];
+    updatedPlaylists.splice(id, 1);
+    // Update your user state here accordingly
+    setUser({
+      ...user,
+      playlists: updatedPlaylists
+    });
+  }
 
   // Definng functions
   useEffect(() => {
@@ -96,8 +107,8 @@ export default function Profile() {
             </div>
             <div className="relative top-[-4rem] right-[5rem] flex max-sm:flex-wrap max-sm:justify-center items-center gap-4 z-20">
               <button onClick={() => setTab('about')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">About</button>
-              <button onClick={() => setTab('likes')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Likes</button>
-              <button onClick={() => setTab('comment')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Comments</button>
+              {profileId === account.id && <button onClick={() => setTab('likes')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Likes</button>}
+              {profileId === account.id && <button onClick={() => setTab('comment')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Comments</button>}
               <button onClick={() => setTab('playlist')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Saved Playlists</button>
             </div>
             <button
@@ -115,6 +126,91 @@ export default function Profile() {
               <h3 className="font-manrope font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">About</h3>
               <p className="font-normal text-base leading-7 text-gray-500 dark:text-gray-300">{user.about}</p>
             </div>
+          </div>
+        )}
+        {profileId === account.id && tab === 'likes' && (
+          <div className="grid grid-cols-12 gap-2 gap-y-6 max-w-6xl my-16 mx-10">
+            {user.likes.map((video) => (
+              <div ket={video.id} className="col-span-12 sm:col-span-6 md:col-span-3">
+                <card className="w-full flex flex-col">
+                  <div className="relative">
+                    <Link href={`/content/${video.id}`}>
+                      <img src="https://picsum.photos/seed/59/300/200" className="w-96 h-auto" />
+                    </Link>
+                    <p className="absolute right-2 bottom-2 bg-gray-900 text-gray-100 text-xs px-1 py">&lt; 1:00:00</p>
+                  </div>
+
+                  <div className="flex flex-row mt-2 gap-2 items-center">
+                    <Link href={`/profile/${video.profileId}`}>
+                      <img src="https://picsum.photos/seed/1/40/40" className="rounded-full max-h-10 max-w-10" />
+                    </Link>
+
+                    <Link href={`/content/${video.id}`} className="flex items-center justify center">
+                      <p className="text-gray-900 dark:text-gray-100 text-sm font-semibold">{video.title}</p>
+                    </Link>
+                  </div>
+                </card>
+              </div>
+            ))}
+          </div>
+        )}
+        {profileId === account.id && tab === 'comment' && (
+          <div className="grid grid-cols-12 gap-2 gap-y-6 max-w-6xl my-16 mx-10">
+            {user.comments.map((video) => (
+              <div ket={video.id} className="col-span-12 sm:col-span-6 md:col-span-3">
+                <card className="w-full flex flex-col">
+                  <div className="relative">
+                    <Link href={`/content/${video.id}`}>
+                      <img src="https://picsum.photos/seed/59/300/200" className="w-96 h-auto" />
+                    </Link>
+                    <p className="absolute right-2 bottom-2 bg-gray-900 text-gray-100 text-xs px-1 py">&lt; 1:00:00</p>
+                  </div>
+
+                  <div className="flex flex-row mt-2 gap-2 items-center">
+                    {/* <!-- Profile Picture --> */}
+                    <Link href={`/profile/${video.profileId}`}>
+                      <img src="https://picsum.photos/seed/1/40/40" className="rounded-full max-h-10 max-w-10" />
+                    </Link>
+
+                    <Link href={`/content/${video.id}`} className="flex items-center justify center">
+                      <p className="text-gray-900 dark:text-gray-100 text-sm font-semibold">{video.title}</p>
+                    </Link>
+                  </div>
+                </card>
+              </div>
+            ))}
+          </div>
+        )}
+        {profileId === account.id && tab === 'playlist' && (
+          <div className={`grid ${sidebarActive ? 'grid-cols-3 gap-2' : 'grid-cols-4 gap-[12rem]'} gap-y-6 max-w-6xl my-16 mx-10`}>
+            {user.playlists.map((playlist) => (
+              <div key={playlist.id} className="relative max-w-sm w-[20rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                {/* Cancel/Delete Icon */}
+                <button
+                  onClick={() => handleRemovePlaylist(playlist.id)}
+                  className="absolute top-2 right-2 p-1 rounded-full opacity-70 bg-gray-200 dark:bg-gray-700 hover:bg-red-500 hover:dark:bg-red-500 transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5 text-gray-600 dark:text-white">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                {/* Playlist Image */}
+                <Link href="#">
+                  <img className="rounded-t-lg w-full" src="https://picsum.photos/seed/59/300/200" alt="" />
+                </Link>
+
+                {/* Playlist Details */}
+                <div className="p-5 flex flex-row gap-4">
+                  <Link>
+                    <img src="https://picsum.photos/seed/1/40/40" alt="" className="rounded-full max-h-10 max-w-10" />
+                  </Link>
+                  <Link href="#">
+                    <h5 className="mb-2 text-md font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </section>
@@ -216,8 +312,7 @@ export default function Profile() {
             </div>
           </form>
         </Modal>
-      )
-      }
+      )}
     </main >
   )
 }

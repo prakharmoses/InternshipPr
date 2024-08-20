@@ -12,9 +12,9 @@ const CourseCard = ({ tutorImage, tutorName, date, thumbImage, videoCount, title
         </div>
         <div className="relative">
             <img src={thumbImage} alt="" className="w-full h-50 object-cover rounded-lg" />
-            <span className="absolute top-4 left-4 bg-black bg-opacity-30 text-white px-6 py-2 rounded-lg text-xl">
+            {videoCount !== '' && <span className="absolute top-4 left-4 bg-black bg-opacity-30 text-white px-6 py-2 rounded-lg text-xl">
                 {videoCount} videos
-            </span>
+            </span>}
         </div>
         <h3 className="text-3xl text-black dark:text-white pt-4 pb-2">{title}</h3>
         <Link to={link} className="inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">

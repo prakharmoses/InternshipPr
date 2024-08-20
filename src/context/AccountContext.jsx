@@ -4,7 +4,7 @@ const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
     const [account, setAccount] = useState(JSON.parse(localStorage.getItem('account')) || {
-        id: 'dgdiughsmsli',
+        id: '1',
         name: 'John Doe',
         email: 'johndoe@gmail.com',
         role: 'Student',
