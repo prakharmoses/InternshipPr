@@ -50,12 +50,12 @@ export default function Courses() {
 
   // Defining State
   const [courses, setCourses] = useState([
-    { tutorImg: pic2, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb1, videoCount: 10, title: 'Complete HTML Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic3, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb2, videoCount: 10, title: 'Complete CSS Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic4, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb3, videoCount: 10, title: 'Complete JS Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic5, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb4, videoCount: 10, title: 'Complete Bootstrap Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic6, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb5, videoCount: 10, title: 'Complete jQuery Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, videoCount: 10, title: 'Complete SASS Tutorial', link: '/course/bdojgdoj' },
+    { tutorImg: pic2, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb1, videoCount: 10, title: 'Complete HTML Tutorial', id: 1 },
+    { tutorImg: pic3, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb2, videoCount: 10, title: 'Complete CSS Tutorial', id: 2 },
+    { tutorImg: pic4, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb3, videoCount: 10, title: 'Complete JS Tutorial', id: 3 },
+    { tutorImg: pic5, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb4, videoCount: 10, title: 'Complete Bootstrap Tutorial', id: 4 },
+    { tutorImg: pic6, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb5, videoCount: 10, title: 'Complete jQuery Tutorial', id: 5 },
+    { tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, videoCount: 10, title: 'Complete SASS Tutorial', id: 6 },
   ]);
   const [selectedFilters, setSelectedFilters] = useState({
     instructor: '',
@@ -104,7 +104,7 @@ export default function Courses() {
               thumbImage={course.thumbImg}
               videoCount={course.videoCount}
               title={course.title}
-              link={course.link}
+              link={`/course/${course.id}`}
             />
           ))}
         </div>
