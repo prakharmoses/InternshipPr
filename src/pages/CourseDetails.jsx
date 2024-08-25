@@ -93,31 +93,27 @@ export default function CourseDetails() {
 
       {/* Playlist Videos Section */}
       <section className="playlist-videos py-8 mx-6">
-        <h1 className="heading text-3xl font-bold mb-6">course content</h1>
-        <div className="box-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center items-start">
-          {[
-            "part 01",
-            "part 02",
-            "part 03",
-            "part 04",
-            "part 05",
-            "part 06",
-          ].map((part, index) => (
-            <a
-              key={index}
-              className="box bg-white p-8 rounded-lg relative"
-              href="watch-video.html"
+        <div class="relative flex my-8">
+          <div class="relative top-0 left-10 max-w-full md:left-15">
+            <div class="bg-black dark:bg-white text-7xl font-bold text-white dark:text-black px-8 py-4 rounded-[1rem]">Content</div>
+          </div>
+        </div>
+        <div className="box-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center items-start">
+          {courseContent.map((part) => (
+            <Link
+              key={part.id}
+              className="box bg-transparent dark:bg-white p-4 rounded-lg relative"
+              to={`/content/${part.id}`}
             >
-              <i className="fas fa-play absolute top-8 left-8 right-8 h-80 bg-black/30 flex items-center justify-center text-5xl text-white rounded-lg hidden group-hover:flex"></i>
               <img
-                src={`images/post-1-${index + 1}.png`}
+                src={part.contentImg}
                 alt=""
-                className="w-full h-80 object-cover rounded-lg"
+                className="w-full h-52 object-cover rounded-lg"
               />
-              <h3 className="mt-6 text-lg text-black group-hover:text-main-color">
-                complete HTML tutorial ({part})
+              <h3 className="mt-3 text-lg font-bold text-black group-hover:text-main-color">
+                {part.title}
               </h3>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
