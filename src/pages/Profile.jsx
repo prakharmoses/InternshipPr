@@ -4,7 +4,9 @@ import { CiEdit } from "react-icons/ci";
 
 // Importing Context
 import { useSidebar } from '../context/SidebarContext';
-import { useAccount } from '../context/AccountContext';
+
+// Importing Hooks
+import { useAccount } from '../hooks/useAuth.js';
 
 // Importing Components
 import Modal from '../components/Modal';

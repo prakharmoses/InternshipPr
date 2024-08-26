@@ -22,6 +22,8 @@ import NotFound from './pages/NotFound';
 import CourseDetails from './pages/CourseDetails';
 import Profile from './pages/Profile';
 import VideoPage from './pages/VideoPage';
+import LoginForm from './pages/Login';
+import SignupForm from './pages/Signup';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
 
               {/* NotFound page layout without Navbar, Sidebar, Footer */}
               <Route path="*" element={<NotFoundLayout />}>
+                <Route path="login" element={<LoginForm />} />
+                <Route path="signup" element={<SignupForm />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

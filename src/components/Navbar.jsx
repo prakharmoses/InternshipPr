@@ -6,12 +6,16 @@ import { Link } from 'react-router-dom';
 import { useDarkMode } from '../context/DarkModeContext';
 import { useSidebar } from '../context/SidebarContext';
 
+// Importing Hooks
+import { useAccount } from '../hooks/useAuth';
+
 // Importing Assets
 import profile from '../assets/pic-1.jpg';
 
 export default function Navbar() {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
     const { sidebarActive, toggleSidebar } = useSidebar();
+    const { account } = useAccount();
 
     // Defining states
     const [profileActive, setProfileActive] = useState(false);
@@ -95,13 +99,13 @@ export default function Navbar() {
                     ref={profileRef}
                 >
                     <img src={profile} className="h-40 w-40 rounded-full object-contain mb-4" alt="" />
-                    <h3 className="text-2xl text-black dark:text-white truncate">shaikh anas</h3>
+                    <h3 className="text-2xl text-black dark:text-white truncate">John Doe</h3>
                     <p className="text-xl text-gray-600">studen</p>
-                    <Link to="profile.html" className="block bg-purple-600 text-white text-lg py-2 px-6 rounded mt-4">view profile</Link>
+                    {account.name && account.jwtToken ? <Link to="/profile/1" className="block bg-purple-600 text-white text-lg py-2 px-6 rounded mt-4">View Profile</Link> :
                     <div className="flex gap-4 mt-4">
-                        <Link to="login.html" className="block bg-orange-400 text-white text-lg py-2 px-6 rounded">login</Link>
-                        <Link to="register.html" className="block bg-orange-400 text-white text-lg py-2 px-6 rounded">register</Link>
-                    </div>
+                        <Link to="/login" className="block bg-orange-400 text-white text-lg py-2 px-6 rounded">Login</Link>
+                        <Link to="/signup" className="block bg-orange-400 text-white text-lg py-2 px-6 rounded">Register</Link>
+                    </div>}
                 </div>
             </section>
         </header>

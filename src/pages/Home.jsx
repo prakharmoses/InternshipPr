@@ -13,7 +13,9 @@ import { SiScikitlearn } from "react-icons/si";
 // Importing context
 import { useDarkMode } from '../context/DarkModeContext';
 import { useSidebar } from '../context/SidebarContext';
-import { useAccount } from '../context/AccountContext';
+
+// Importing hooks
+import { useAccount } from '../hooks/useAuth.js';
 
 // Importing components
 import CourseCard from '../components/CourseCard';
