@@ -2,24 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
+const cookieParser = require('cookie-parser');
 
-// Importing files and modules
+// Importing middleware
 const { logger } = require('./middlewares/logger');
+const { errorHandler } = require('./middlewares/errorHandler')
 
-// Define your list of allowed origins
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5000', '*'];
-
-// Configure CORS with dynamic origin validation
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
-};
+// Importing configs
+const corsOptions = require('./config/corsOptions');
 
 // Load environment variables
 dotenv.config();
@@ -28,10 +19,17 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// app.use(cors(corsOptions));
-app.use(cors());
-app.use(express.json());
 app.use(logger);
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
+app.use('/', express.static(path.join(__dirname, '../public')));
+
+// Routes
+app.use('/', require('./routes/auth'))
+
+// Error handler middleware
+app.use(errorHandler);
 
 // Retrieve environment variables
 const { MONGO_URI, PORT } = process.env;
