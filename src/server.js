@@ -11,6 +11,7 @@ const { errorHandler } = require('./middlewares/errorHandler')
 
 // Importing configs
 const corsOptions = require('./config/corsOptions');
+const dbConnect = require('./config/dbConnect');
 
 // Load environment variables
 dotenv.config();
@@ -32,10 +33,10 @@ app.use('/', require('./routes/auth'))
 app.use(errorHandler);
 
 // Retrieve environment variables
-const { MONGO_URI, PORT } = process.env;
+const { PORT } = process.env;
 
 // Connect to MongoDB
-mongoose.connect(MONGO_URI);
+dbConnect();
 
 console.log('Connecting to MongoDB...');
 mongoose.connection.once('open', () => {
