@@ -5,16 +5,15 @@ const userSchema = new mongoose.Schema(
         _id: {
             type: mongoose.Schema.Types.ObjectId,
             auto: true,
-            required: true,
-        },
-        name: {
-            type: String,
-            required: [true, 'Name is required'],
         },
         email: {
             type: String,
             required: [true, 'Email is required'],
             unique: true,
+        },
+        name: {
+            type: String,
+            required: [true, 'Name is required'],
         },
         password: {
             type: String,
@@ -34,18 +33,21 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: 'Hey there! I am an Angirasoft member.',
         },
-        likes: {
-            type: [String],
+        likes: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Content',
             default: [],
-        },
-        comments: {
-            type: [String],
+        }],
+        comments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Content',
             default: [],
-        },
-        saved: {
-            type: [String],
+        }],
+        saved: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course',
             default: [],
-        },
+        }],
         role: {
             type: String,
             enum: ['student', 'tutor', 'admin'],
@@ -66,9 +68,8 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-    },
-    {
-        timestamps: true,
+    }, {
+        _id: false,
     }
 )
 

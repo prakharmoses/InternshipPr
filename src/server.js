@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '../public')));
 
 // Routes
-app.use('/', require('./routes/auth'))
+app.use('/auth', require('./routes/authRoute'))
 
 // Error handler middleware
 app.use(errorHandler);
