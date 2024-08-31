@@ -22,12 +22,15 @@ const userSchema = new mongoose.Schema(
         sex: {
             type: String,
             enum: ['M', 'F', 'O'],
+            default: 'O',
         },
         avatar: {
             type: String,
+            default: 'https://res.cloudinary.com/angirasoft/image/upload/v1632178384/angirasoft/avatars/default-avatar.png',
         },
         cover: {
             type: String,
+            default: 'https://res.cloudinary.com/angirasoft/image/upload/v1632178384/angirasoft/covers/default-cover.jpg',
         },
         about: {
             type: String,
@@ -59,6 +62,7 @@ const userSchema = new mongoose.Schema(
         },
         jwtToken: {
             type: String,
+            required: false,
         },
         createdAt: {
             type: Date,

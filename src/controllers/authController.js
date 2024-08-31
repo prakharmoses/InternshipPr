@@ -37,7 +37,7 @@ const login = asyncHandler(async (req, res) => {
                 "role": foundUser.role,
             }
         },
-        process.env.JWT_SECRET,
+        process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: '10m' }
     )
 
@@ -48,7 +48,7 @@ const login = asyncHandler(async (req, res) => {
                 "email": foundUser.email,
             }
         },
-        process.env.JWT_SECRET,
+        process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: '1d' }
     )
 
@@ -62,6 +62,80 @@ const login = asyncHandler(async (req, res) => {
 
     // Send access token in response
     res.status(200).json({ accessToken })
+})
+
+// @desc   Register user
+// @route  POST /auth/register
+// @access Public
+const register = asyncHandler(async (req, res) => {
+    // Get email and password from request body
+    const { email, password, name, sex, confirmPassword } = req.body;
+
+    if (!email || !password || !name || !confirmPassword) {
+        res.status(400);
+        throw new Error('Kindly provide all the fields!');
+    }
+
+    // Check if user exists
+    const foundUser = await User.findOne({ email }).exec();
+    if (foundUser) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
+
+    // Check if password and confirmPassword match
+    if (password !== confirmPassword) {
+        res.status(400);
+        throw new Error('Passwords do not match');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = new User({
+        email,
+        password: hashedPassword,
+        name,
+        sex: sex ? sex : 'O',
+    })
+
+    // Save user to database
+    const savedUser = await newUser.save();
+
+    // Generate access token
+    const accessToken = jwt.sign(
+        {
+            "UserInfo": {
+                "email": savedUser.email,
+                "role": savedUser.role,
+            }
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: '10m' }
+    )
+
+    // Generate refresh token
+    const refreshToken = jwt.sign(
+        {
+            "UserInfo": {
+                "email": savedUser.email,
+            }
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: '1d' }
+    )
+
+    // Create secure cookie with refresh token
+    res.cookie('jwt', refreshToken, {
+        httpOnly: true,                  // Accessible only by web server
+        secure: true,                    // https only
+        sameSite: 'None',
+        maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
+    })
+
+    // Send access token in response
+    res.status(201).json({ accessToken: accessToken })
 })
 
 // @desc   Refresh token
@@ -124,6 +198,7 @@ const logout = asyncHandler(async (req, res) => {
 
 module.exports = {
     login,
+    register,
     refresh,
     logout,
 }

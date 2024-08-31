@@ -28,6 +28,11 @@ app.use('/', express.static(path.join(__dirname, '../public')));
 
 // Routes
 app.use('/auth', require('./routes/authRoute'))
+app.use('/users', require('./routes/userRoute'))
+app.use('/tutors', require('./routes/tutorRoute'))
+app.use('/company', require('./routes/companyRoute'))
+app.use('/courses', require('./routes/courseRoute'))
+app.use('/content', require('./routes/contentRoute'))
 
 // Error handler middleware
 app.use(errorHandler);

@@ -15,6 +15,16 @@ const courseSchema = new mongoose.Schema(
             type: String,
             required: [true, 'Description is required'],
         },
+        category: {
+            type: String,
+            enum: ['Development', 'Business', 'Finance', 'IT & Software', 'Office Productivity', 'Personal Development', 'Design', 'Marketing', 'Lifestyle', 'Photography', 'Health & Fitness', 'Music'],
+            required: [true, 'Category is required'],
+        },
+        status: {
+            type: String,
+            enum: ['ongoing', 'ended', 'upcoming'],
+            default: 'ongoing',
+        },
         tutor: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
