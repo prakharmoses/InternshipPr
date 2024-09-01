@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 // Importing Context
 import { useSidebar } from '../context/SidebarContext';
+import { useAccount } from '../hooks/useAuth.js'
 
 // Importing Assets
 import profile from '../assets/pic-1.jpg';
@@ -11,6 +12,7 @@ import profile from '../assets/pic-1.jpg';
 export default function Sidebar() {
     const navigate = useNavigate();
     const { sidebarActive, setSidebarActive, toggleSidebar } = useSidebar();
+    const { account } = useAccount();
 
     // Defining functions
     useEffect(() => {
@@ -45,13 +47,23 @@ export default function Sidebar() {
             </button> */}
             <div className="p-4">
                 <div className="text-center mb-8">
-                    <img src={profile} className="h-24 w-24 rounded-full mx-auto" alt="Profile" />
-                    <h3 className="text-xl text-gray-900 dark:text-gray-100 mt-2">Shaikh Anas</h3>
-                    <p className="text-gray-600 dark:text-gray-400">Student</p>
-                    <button
-                        onClick={() => navigate('/profile/1')}
-                        className="text-white bg-purple-600 rounded-lg py-2 px-6 text-xl"
-                    >View Profile</button>
+                    {account.name ? (<>
+                        <img src={account.avatar} className="h-24 w-24 rounded-full mx-auto" alt="Profile" />
+                        <h3 className="text-xl text-gray-900 dark:text-gray-100 mt-2">{account.name}</h3>
+                        <p className="text-gray-600 dark:text-gray-400">{account.role}</p>
+                        <button
+                            onClick={() => navigate(`/profile/${account.id}`)}
+                            className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2 mt-4"
+                        >View Profile</button>
+                    </>) : (<>
+                        <img src={profile} className="h-24 w-24 rounded-full mx-auto" alt="Profile" />
+                        <h3 className="text-xl text-gray-900 dark:text-gray-100 mt-2">Guest</h3>
+                        <p className="text-gray-600 dark:text-gray-400">guest</p>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2 mt-4"
+                        >Login</button>
+                    </>)}
                 </div>
                 <nav className="flex flex-col">
                     <Link to="/" className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">

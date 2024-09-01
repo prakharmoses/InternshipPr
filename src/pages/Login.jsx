@@ -1,20 +1,24 @@
 // src/components/LoginForm.jsx
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Importing hooks
 import { useAccount } from '../hooks/useAuth';
 
 export default function LoginForm() {
+    const navigate = useNavigate();
+    const { login } = useAccount();
+
+    // Define states
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useAccount();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
-            alert('Login successful!');
+            const res = await login(email, password);
+            if (res === 'success') navigate('/');
+            else alert(res);
         } catch (error) {
             console.error(error);
             alert('Login failed.');

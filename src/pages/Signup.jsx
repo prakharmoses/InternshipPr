@@ -1,11 +1,12 @@
 // src/components/SignupForm.jsx
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Importing hooks
 import { useAccount } from '../hooks/useAuth';
 
 export default function SignupForm() {
+    const navigate = useNavigate();
     const { signup } = useAccount();
 
     // Defining States
@@ -17,9 +18,11 @@ export default function SignupForm() {
 
     const handleSignup = async (e) => {
         e.preventDefault();
+        if (sex === '') return alert('Please select the sex first!');
         try {
-            await signup(email, password);
-            alert('Signup successful!');
+            const res = await signup(email, password, name, sex, confirmPassword);
+            if (res === 'success') navigate('/');
+            else alert(res);
         } catch (error) {
             console.error(error);
             alert('Signup failed.');
@@ -75,14 +78,17 @@ export default function SignupForm() {
                         </div>
                         <div className="flex flex-col pt-4">
                             <div className="focus-within:border-b-gray-500 relative flex overflow-hidden border-b-2 transition">
-                                <input
-                                    type="text"
+                                <select
                                     id="user-sex"
                                     className="w-full flex-1 appearance-none border-gray-300 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
-                                    placeholder="Sex"
                                     value={sex}
                                     onChange={(e) => setSex(e.target.value)}
-                                />
+                                >
+                                    <option value="" disabled>Select Sex</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="O">Other</option>
+                                </select>
                             </div>
                         </div>
                         <div className="flex flex-col pt-4">

@@ -15,7 +15,7 @@ import profile from '../assets/pic-1.jpg';
 export default function Navbar() {
     const { isDarkMode, toggleDarkMode } = useDarkMode();
     const { sidebarActive, toggleSidebar } = useSidebar();
-    const { account } = useAccount();
+    const { account, logout } = useAccount();
 
     // Defining states
     const [profileActive, setProfileActive] = useState(false);
@@ -98,14 +98,23 @@ export default function Navbar() {
                     className={`absolute top-full right-8 rounded-lg p-4 text-center flex flex-col items-center overflow-hidden transform transition-transform duration-200 ease-linear w-80 ${profileActive ? 'scale-100' : 'scale-0'} dark:bg-gray-900 bg-neutral-100 text-black dark:text-white`}
                     ref={profileRef}
                 >
-                    <img src={profile} className="h-40 w-40 rounded-full object-contain mb-4" alt="" />
-                    <h3 className="text-2xl text-black dark:text-white truncate">John Doe</h3>
-                    <p className="text-xl text-gray-600">studen</p>
-                    {account.name && account.jwtToken ? <Link to="/profile/1" className="block bg-purple-600 text-white text-lg py-2 px-6 rounded mt-4">View Profile</Link> :
-                    <div className="flex gap-4 mt-4">
-                        <Link to="/login" className="block bg-orange-400 text-white text-lg py-2 px-6 rounded">Login</Link>
-                        <Link to="/signup" className="block bg-orange-400 text-white text-lg py-2 px-6 rounded">Register</Link>
-                    </div>}
+                    {account.name && account.jwtToken ? (<>
+                        <img src={account.avatar} className="h-40 w-40 rounded-full mx-auto mb-4" alt="" />
+                        <h3 className="text-2xl text-black dark:text-white truncate">{account.name}</h3>
+                        <p className="text-xl text-gray-600">{account.role}</p>
+                        <div className="flex flex-col gap-4 mt-4">
+                            <Link to={`/profile/${account.id}`} className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-10 py-2.5 text-center me-2">View Profile</Link>
+                            <button onClick={() => logout()} className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2">Logout</button>
+                        </div>
+                    </>) : (<>
+                        <img src={profile} className="h-40 w-40 rounded-full object-contain mb-4" alt="" />
+                        <h3 className="text-2xl text-black dark:text-white truncate">Guest</h3>
+                        <p className="text-xl text-gray-600">guest</p>
+                        <div className="flex gap-4 mt-4">
+                            <Link to="/login" className="rounded-md border border-slate-300 py-2 px-4 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">Login</Link>
+                            <Link to="/signup" className="rounded-md border border-slate-300 py-2 px-4 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">Sign Up</Link>
+                        </div>
+                    </>)}
                 </div>
             </section>
         </header>
