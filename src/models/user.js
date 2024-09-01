@@ -26,11 +26,11 @@ const userSchema = new mongoose.Schema(
         },
         avatar: {
             type: String,
-            default: 'https://res.cloudinary.com/angirasoft/image/upload/v1632178384/angirasoft/avatars/default-avatar.png',
+            default: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080',
         },
         cover: {
             type: String,
-            default: 'https://res.cloudinary.com/angirasoft/image/upload/v1632178384/angirasoft/covers/default-cover.jpg',
+            default: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxob21lfGVufDB8MHx8fDE3MTA0MDE1NDZ8MA&ixlib=rb-4.0.3&q=80&w=1080',
         },
         about: {
             type: String,

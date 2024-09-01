@@ -135,7 +135,12 @@ const register = asyncHandler(async (req, res) => {
     })
 
     // Send access token in response
-    res.status(201).json({ accessToken: accessToken })
+    res.status(201).json({
+        id: savedUser._id,
+        avatar: savedUser.avatar,
+        cover: savedUser.cover,
+        accessToken: accessToken
+    })
 })
 
 // @desc   Refresh token
