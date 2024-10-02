@@ -4,17 +4,22 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 
 // Importing middleware
-const { logger } = require('./middlewares/logger');
+const { logger, logEvents } = require('./middlewares/logger');
 const { errorHandler } = require('./middlewares/errorHandler')
 
 // Importing configs
 const corsOptions = require('./config/corsOptions');
 const dbConnect = require('./config/dbConnect');
+const helmetConfig = require('./config/helmetConfig');
 
 // Load environment variables
 dotenv.config();
+
+// Connect to MongoDB
+dbConnect();
 
 // Create express app
 const app = express();
@@ -22,6 +27,8 @@ const app = express();
 // Middleware
 app.use(logger);
 app.use(cors(corsOptions));
+app.use(helmet());
+app.use(helmetConfig());
 app.use(express.json());
 app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '../public')));
@@ -39,9 +46,6 @@ app.use(errorHandler);
 
 // Retrieve environment variables
 const { PORT } = process.env;
-
-// Connect to MongoDB
-dbConnect();
 
 console.log('Connecting to MongoDB...');
 mongoose.connection.once('open', () => {

@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const commentScema = new mongoose.Schema(
     {
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
@@ -39,7 +43,8 @@ const commentScema = new mongoose.Schema(
             }
         }]
     }, {
-        timestamps: true
+        timestamps: true,
+        _id: false
     }
 )
 
@@ -72,6 +77,16 @@ const contentSchema = new mongoose.Schema(
         description: {
             type: String,
             required: [true, 'Description is required'],
+        },
+        course: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course',
+            required: true
+        },
+        tutor: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         },
         comments: [commentScema]
     },

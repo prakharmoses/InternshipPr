@@ -58,6 +58,10 @@ const companySchema = new mongoose.Schema(
             type: String,
             required: [true, 'Description is required'],
         },
+        location: {
+            type: String,
+            required: [true, 'Location is required'],
+        },
         feedback: [feedbackSchema],
     }, {
         _id: false,

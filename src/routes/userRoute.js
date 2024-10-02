@@ -8,10 +8,10 @@ const verifyJWT = require('../middlewares/verifyJWT')
 const userController = require('../controllers/userController')
 
 // Defining Routes
-router.get('/oneUser', userController.getOneUser)
+router.get('/oneUser/:email', verifyJWT, userController.getOneUser)
 router.get('/', verifyJWT, userController.getUsers)
-router.put('/update', verifyJWT, userController.updateUser)
-router.put('/updateRole', verifyJWT, userController.updateRole)
+router.patch('/update', verifyJWT, userController.updateUser)
+router.patch('/resetPassword', verifyJWT, userController.resetPassword)
 router.delete('/delete', verifyJWT, userController.deleteUser)
 
 module.exports = router

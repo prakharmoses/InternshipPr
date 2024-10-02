@@ -51,18 +51,14 @@ const userSchema = new mongoose.Schema(
             ref: 'Course',
             default: [],
         }],
-        role: {
-            type: String,
+        roles: {
+            type: [String],
             enum: ['student', 'tutor', 'admin'],
-            default: 'student',
+            default: ['student'],
         },
         isEmailVerified: {
             type: Boolean,
             default: false,
-        },
-        jwtToken: {
-            type: String,
-            required: false,
         },
         createdAt: {
             type: Date,

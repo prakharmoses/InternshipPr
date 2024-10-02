@@ -10,6 +10,7 @@ const tutorSchema = new mongoose.Schema(
         id: {
             type: mongoose.Schema.Types.ObjectId,
             required: [true, 'Id is required'],
+            ref: 'User',
         },
         name: {
             type: String,

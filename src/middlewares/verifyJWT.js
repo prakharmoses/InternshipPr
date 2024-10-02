@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const verifyJWT = (req, res, next) => {
-    const authHeader = req.headers.authorization || req.headers.authorization;
+    const authHeader = req.headers.authorization || req.headers.Authorization;
 
     if (!authHeader?.startsWith('Bearer ')) {
         res.status(401);
@@ -20,8 +20,9 @@ const verifyJWT = (req, res, next) => {
             throw new Error('Forbidden');
         }
 
+        req.userId = decoded.UserInfo.userId;
         req.email = decoded.UserInfo.email;
-        req.role = decoded.UserInfo.role;
+        req.roles = decoded.UserInfo.roles;
         next();
     })
 }

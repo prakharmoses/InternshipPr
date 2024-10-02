@@ -8,9 +8,11 @@ const verifyJWT = require('../middlewares/verifyJWT')
 const contentController = require('../controllers/contentController')
 
 // Defining Routes
-router.get('/:id', verifyJWT, contentController.getContents)
+router.get('/:contentId', verifyJWT, contentController.getContent)
 router.post('/add', verifyJWT, contentController.createContent)
-router.put('/update', verifyJWT, contentController.updateContent)
+router.patch('/update', verifyJWT, contentController.updateContent)
 router.delete('/delete', verifyJWT, contentController.deleteContent)
+router.patch('/addComment', verifyJWT, contentController.addComment)
+router.patch('/addCommentReply', verifyJWT, contentController.addCommentReply)
 
 module.exports = router

@@ -8,7 +8,7 @@ const verifyJWT = require('../middlewares/verifyJWT')
 const companyController = require('../controllers/companyController')
 
 // Defining Routes
-router.get('/:id', companyController.getOneCompany)
+router.get('/:companyId', companyController.getOneCompany)
 router.get('/', verifyJWT, companyController.getCompanies)
 router.post('/add', verifyJWT, companyController.createCompany)
 router.put('/update/', verifyJWT, companyController.updateCompany)
