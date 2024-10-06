@@ -19,6 +19,7 @@ export default function SignupForm() {
     const handleSignup = async (e) => {
         e.preventDefault();
         if (sex === '') return alert('Please select the sex first!');
+        
         try {
             const res = await signup(email, password, name, sex, confirmPassword);
             if (res === 'success') navigate('/');
