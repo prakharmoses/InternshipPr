@@ -1,27 +1,50 @@
 // src/components/LoginForm.jsx
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
-// Importing hooks
-import { useAccount } from '../hooks/useAuth';
-
-export default function LoginForm() {
+export default function ResetPassword() {
+    const { passwordToken } = useParams();
     const navigate = useNavigate();
-    const { login } = useAccount();
 
     // Define states
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [passwordStatus, setPasswordStatus] = useState(false);
 
-    const handleLogin = async (e) => {
+    // Define functions
+    const handleResetPassword = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        const { REACT_APP_EXPRESS_APP_URL: EXPRESS_APP_URL } = process.env;
+
         try {
-            const res = await login(email, password);
-            if (res === 'success') navigate('/');
-            else alert(res);
+            const response = await fetch(`${EXPRESS_APP_URL}/auth/resetPassword/${passwordToken}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    password,
+                    confirmPassword,
+                }),
+                credentials: 'include'
+            });
+            const data = await response.json();
+
+            if (response.status === 200) {
+                setPasswordStatus(true);
+                setTimeout(() => {
+                    navigate('/login');
+                }, 3000);
+            } else {
+                alert(data.message);
+            }
         } catch (error) {
             console.error(error);
-            alert('Login failed.');
+            alert('Password reset failed.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -33,30 +56,18 @@ export default function LoginForm() {
                 </div>
                 <div className="lg:w-[28rem] mx-auto my-auto flex flex-col justify-center pt-8 md:justify-start md:px-6 md:pt-0">
                     <p className="text-center text-3xl font-bold text-stone-800">Welcome back</p>
-                    <p className="mt-2 text-center text-gray-500">Please enter your details.</p>
+                    <p className="mt-2 text-center text-gray-500">Reset the new password down below, and be on track...</p>
 
-                    <button
-                        onClick={() => alert('Google login coming soon!')}
-                        className="-2 mt-8 flex items-center justify-center text-black rounded-md border px-4 py-1 outline-none ring-gray-400 ring-offset-2 transition focus:ring-2 hover:border-transparent hover:bg-black hover:text-white"
-                    >
-                        <img className="mr-2 h-5" src="https://static.cdnlogo.com/logos/g/35/google-icon.svg" alt='' />
-                         Log in with Google
-                    </button>
-
-                    <div className="relative mt-8 flex h-px place-items-center bg-gray-200">
-                        <div className="absolute left-1/2 h-6 w-14 -translate-x-1/2 bg-white text-center text-sm text-gray-500">or</div>
-                    </div>
-
-                    <form className="flex flex-col pt-3 md:pt-8" onSubmit={handleLogin}>
+                    <form className="flex flex-col pt-3 md:pt-8" onSubmit={handleResetPassword}>
                         <div className="flex flex-col pt-4">
                             <div className="focus-within:border-b-gray-500 relative flex overflow-hidden border-b-2 transition">
                                 <input
-                                    type="email"
-                                    id="login-email"
+                                    type="password"
+                                    id="password"
                                     className="w-full flex-1 appearance-none border-gray-300 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
-                                    placeholder="Email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="New Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -64,30 +75,25 @@ export default function LoginForm() {
                             <div className="focus-within:border-b-gray-500 relative flex overflow-hidden border-b-2 transition">
                                 <input
                                     type="password"
-                                    id="login-password"
+                                    id="confirmPassword"
                                     className="w-full flex-1 appearance-none border-gray-300 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Confirm Password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
-                            </div>
-                            {/* Forgot password */}
-                            <div className="flex justify-end my-2">
-                                <Link to="/forgot-password" className="text-sm text-gray-600 hover:underline">Forgot password?</Link>
                             </div>
                         </div>
                         <button
                             type="submit"
-                            className="w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-base font-semibold text-white shadow-md ring-gray-500 ring-offset-2 transition focus:ring-2"
-                        >Log in</button>
+                            className={`w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-base font-semibold text-white shadow-md ring-gray-500 ring-offset-2 transition focus:ring-2 ${loading ? 'opacity-50' : 'hover:bg-gray-800'}`}
+                            disabled={loading}
+                        >{loading ? 'Email sent...' : 'Submit'}</button>
+                        {passwordStatus && (
+                            <div className="text-green-600 font-bold text-xl mt-4">
+                                Password reset successful! Redirecting to login page...
+                            </div>
+                        )}
                     </form>
-
-                    <div className="py-12 text-center">
-                        <p className="whitespace-nowrap text-gray-600">
-                            Don't have an account? &nbsp;
-                            <Link to="/signup" className="underline-offset-4 font-semibold text-gray-900 underline">Sign up for free.</Link>
-                        </p>
-                    </div>
                 </div>
             </div>
             <div className="pointer-events-none relative hidden h-screen select-none bg-black md:block md:w-1/2">

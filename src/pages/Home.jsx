@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   FaCode, FaPen,
   FaChartLine, FaMusic, FaCamera,
@@ -34,39 +34,118 @@ import thumb4 from '../assets/thumb-4.png';
 import thumb5 from '../assets/thumb-5.png';
 import thumb6 from '../assets/thumb-6.png';
 
+// Define arrays
+const categoryIcons = {
+    'Development': <FaCode className='mr-2 text-black dark:text-white' />,
+    'Business': <FaChartSimple className='mr-2 text-black dark:text-white' />,
+    'Design': <FaPen className='mr-2 text-black dark:text-white' />,
+    'Marketing': <FaChartLine className='mr-2 text-black dark:text-white' />,
+    'Software': <FaCog className='mr-2 text-black dark:text-white' />,
+    'Science': <FaVial className='mr-2 text-black dark:text-white' />,
+    'JTML': <FaHtml5 className='mr-2 text-black dark:text-white' />,
+    'CSS': <FaCss3 className='mr-2 text-black dark:text-white' />,
+    'JavaScript': <FaJs className='mr-2 text-black dark:text-white' />,
+    'React': <FaReact className='mr-2 text-black dark:text-white' />,
+    'PHP': <FaPhp className='mr-2 text-black dark:text-white' />,
+    'Bootstrap': <FaBootstrap className='mr-2 text-black dark:text-white' />,
+    'Machine Learning': <SiScikitlearn className='mr-2 text-black dark:text-white' />,
+}
+
 export default function Home() {
+  const navigate = useNavigate();
   const { isDarkMode, setIsDarkMode, toggleDarkMode } = useDarkMode();
-  const { account } = useAccount();
+  const { account, callBackendApi } = useAccount();
   const { sidebarActive } = useSidebar();
 
   // Initialising state
-  const [categoryIcons, setCategoryIcons] = useState([
-    { name: 'Development', icon: <FaCode className='mr-2 text-black dark:text-white' /> },
-    { name: 'Business', icon: <FaChartSimple className='mr-2 text-black dark:text-white' /> },
-    { name: 'Design', icon: <FaPen className='mr-2 text-black dark:text-white' /> },
-    { name: 'Marketing', icon: <FaChartLine className='mr-2 text-black dark:text-white' /> },
-    { name: 'Software', icon: <FaCog className='mr-2 text-black dark:text-white' /> },
-    { name: 'Science', icon: <FaVial className='mr-2 text-black dark:text-white' /> },
-    { name: 'JTML', icon: <FaHtml5 className='mr-2 text-black dark:text-white' /> },
-    { name: 'CSS', icon: <FaCss3 className='mr-2 text-black dark:text-white' /> },
-    { name: 'JavaScript', icon: <FaJs className='mr-2 text-black dark:text-white' /> },
-    { name: 'React', icon: <FaReact className='mr-2 text-black dark:text-white' /> },
-    { name: 'PHP', icon: <FaPhp className='mr-2 text-black dark:text-white' /> },
-    { name: 'Bootstrap', icon: <FaBootstrap className='mr-2 text-black dark:text-white' /> },
-    { name: 'Machine Learning', icon: <SiScikitlearn className='mr-2 text-black dark:text-white' /> },
+  const [accountInsights, setAccountInsights] = useState({
+    likes: 0,
+    comments: 0,
+    playlist: 0
+})
+
+  // Initialising state
+  const [categories, setCategories] = useState([
+    'Development', 'Business', 'Design', 'Marketing', 'Software', 'Science', 'JTML', 'CSS', 'JavaScript', 'React', 'PHP',
+    'Bootstrap', 'Machine Learning'
   ]);
   const [courses, setCourses] = useState([
-    { tutorImg: pic2, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb1, videoCount: 10, title: 'Complete HTML Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic3, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb2, videoCount: 10, title: 'Complete CSS Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic4, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb3, videoCount: 10, title: 'Complete JS Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic5, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb4, videoCount: 10, title: 'Complete Bootstrap Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic6, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb5, videoCount: 10, title: 'Complete jQuery Tutorial', link: '/course/bdojgdoj' },
-    { tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, videoCount: 10, title: 'Complete SASS Tutorial', link: '/course/bdojgdoj' },
+    { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic2, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb1, videoCount: 10, title: 'Complete HTML Tutorial' },
+    { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic3, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb2, videoCount: 10, title: 'Complete CSS Tutorial' },
+    { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic4, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb3, videoCount: 10, title: 'Complete JS Tutorial' },
+    { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic5, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb4, videoCount: 10, title: 'Complete Bootstrap Tutorial' },
+    { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic6, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb5, videoCount: 10, title: 'Complete jQuery Tutorial' },
+    { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, videoCount: 10, title: 'Complete SASS Tutorial' },
   ])
 
+  // Function to handle the become tutor button
+  const handleBecomeTutor = () => {
+      if (!localStorage.getItem('account')) {
+          return navigate('/login');
+      }
+  }
+
   useEffect(() => {
+    const fetchTopCourses = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/courses/topCourses/6`);
+            const data = await response.json();
+
+            if (response.ok) {
+                setCourses(data.courses);
+            } else {
+                console.error(data.message);
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    const fetchProfileInsights = async () => {
+        try {
+            const response = await callBackendApi( `/users/getProfile-insights/${account.email}`, 'GET', null);
+            const data = await response.json();
+
+            if (response.ok) {
+                setAccountInsights({
+                    likes: data.likes,
+                    comments: data.comments,
+                    playlist: data.saved
+                });
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/company/getCategories`);
+            const data = await response.json();
+
+            if (response.status === 200) {
+                setCategories(data.categories);
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
     // Initialise the category icons
+
     // Initialise the Courses
+    // fetchTopCourses();
+
+    // Fetch the account insights
+    fetchProfileInsights();
+
+    // Fetch the categories
+    fetchCategories();
   }, []);
 
   return (
@@ -75,7 +154,7 @@ export default function Home() {
         <div className="grid grid-cols-auto-fit gap-6 justify-center">
           <div className="mx-12 my-14">
             <div className="flex flex-wrap -mx-6">
-              <Link to={`/profile/${account.id}`} className="w-full px-6 sm:w-1/2 xl:w-1/3">
+              <Link to={`/profile/${account.id}?tab=likes`} className="w-full px-6 sm:w-1/2 xl:w-1/3">
                 <div className="flex items-center px-5 py-6 shadow-sm rounded-md bg-slate-100 dark:bg-slate-800">
                   <div className="p-3 rounded-full bg-indigo-600 bg-opacity-75">
                     <svg className="h-8 w-8 text-white" viewBox="0 0 28 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,13 +180,13 @@ export default function Home() {
                   </div>
 
                   <div className="mx-5">
-                    <h4 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">25</h4>
+                    <h4 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">{accountInsights.likes}</h4>
                     <div className="text-gray-500">Likes</div>
                   </div>
                 </div>
               </Link>
 
-              <Link to={`/profile/${account.id}`} className="w-full mt-6 px-6 sm:w-1/2 xl:w-1/3 sm:mt-0">
+              <Link to={`/profile/${account.id}?tab=comment`} className="w-full mt-6 px-6 sm:w-1/2 xl:w-1/3 sm:mt-0">
                 <div className="flex items-center px-5 py-6 shadow-sm rounded-md bg-slate-100 dark:bg-slate-800">
                   <div className="p-3 rounded-full bg-orange-600 bg-opacity-75">
                     <svg className="h-8 w-8 text-white" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,26 +203,26 @@ export default function Home() {
                   </div>
 
                   <div className="mx-5">
-                    <h4 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">12</h4>
+                    <h4 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">{accountInsights.comments}</h4>
                     <div className="text-gray-500">Commnets</div>
                   </div>
                 </div>
               </Link>
 
-              <Link to={`/profile/${account.id}`} className="w-full mt-6 px-6 sm:w-1/2 xl:w-1/3 xl:mt-0">
+              <Link to={`/profile/${account.id}?tab=playlist`} className="w-full mt-6 px-6 sm:w-1/2 xl:w-1/3 xl:mt-0">
                 <div className="flex items-center px-5 py-6 shadow-sm rounded-md bg-slate-100 dark:bg-slate-800">
                   <div className="p-3 rounded-full bg-pink-600 bg-opacity-75">
                     <svg className="h-8 w-8 text-white" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M6.99998 11.2H21L22.4 23.8H5.59998L6.99998 11.2Z" fill="currentColor"
-                        stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+                        stroke="currentColor" strokeWidth="2" stroke-linejoin="round"></path>
                       <path
                         d="M9.79999 8.4C9.79999 6.08041 11.6804 4.2 14 4.2C16.3196 4.2 18.2 6.08041 18.2 8.4V12.6C18.2 14.9197 16.3196 16.8 14 16.8C11.6804 16.8 9.79999 14.9197 9.79999 12.6V8.4Z"
-                        stroke="currentColor" stroke-width="2"></path>
+                        stroke="currentColor" strokeWidth="2"></path>
                     </svg>
                   </div>
 
                   <div className="mx-5">
-                    <h4 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">4</h4>
+                    <h4 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">{accountInsights.playlist}</h4>
                     <div className="text-gray-500">Saved Playlist</div>
                   </div>
                 </div>
@@ -152,34 +231,37 @@ export default function Home() {
           </div>
 
           <section className="bg-gray-50 py-8 w-[67rem] mx-auto antialiased dark:bg-gray-900 md:py-8">
-            <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+            {Array.isArray(categories) && categories.length > 0 ? <div className="mx-auto max-w-screen-xl px-4">
               <div className="mb-4 flex items-center justify-between gap-4 md:mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Popular Topics and Categories</h2>
 
                 <Link to="/courses" title="" className="flex items-center text-base font-medium text-primary-700 hover:underline dark:text-primary-500">
                   See more
                   <svg className="ms-1 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
                   </svg>
                 </Link>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-                {categoryIcons.map((category, idx) => (
+                {categories.map((category, idx) => (
                   <Link key={idx} to={`/courses/${category.name}`} className="flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                    {category.icon}
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{category.name}</span>
+                    {categoryIcons[category]}
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{category}</span>
                   </Link>
                 ))}
               </div>
-            </div>
+            </div> : <div className="text-center">No categories found</div>}
           </section>
 
-          <div className="bg-white dark:bg-black rounded-lg p-6 shadow-[0_0_20px_3px_#d48aff] dark:shadow-[0_0_20px_3px_#a91efa]">
+          {!account.roles.includes('tutor') && <div className="bg-white dark:bg-black rounded-lg p-6 shadow-[0_0_20px_3px_#d48aff] dark:shadow-[0_0_20px_3px_#a91efa]">
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">Become a tutor</h3>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">Join us for an exciting journey to educate society. A decent salary is promised.</p>
-            <Link to="teachers.html" className="inline-block px-4 py-2 bg-blue-500 text-white rounded">Get Started</Link>
-          </div>
+            <button
+                onClick={handleBecomeTutor}
+                className="inline-block px-4 py-2 bg-blue-500 text-white rounded"
+            >Get Started</button>
+          </div>}
         </div>
       </section>
 

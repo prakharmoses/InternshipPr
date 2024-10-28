@@ -11,7 +11,7 @@ import profile from '../assets/pic-1.jpg';
 
 export default function Sidebar() {
     const navigate = useNavigate();
-    const { sidebarActive, setSidebarActive, toggleSidebar } = useSidebar();
+    const { sidebarActive, setSidebarActive } = useSidebar();
     const { account } = useAccount();
 
     // Defining functions
@@ -50,7 +50,7 @@ export default function Sidebar() {
                     {account.name ? (<>
                         <img src={account.avatar} className="h-24 w-24 rounded-full mx-auto" alt="Profile" />
                         <h3 className="text-xl text-gray-900 dark:text-gray-100 mt-2">{account.name}</h3>
-                        <p className="text-gray-600 dark:text-gray-400">{account.role}</p>
+                        <p className="text-gray-600 dark:text-gray-400">{account.roles.indexOf('admin') !== -1 ? 'Admin' : account.roles.indexOf('tutor') !== -1 ? 'Tutor' : 'Student'}</p>
                         <button
                             onClick={() => navigate(`/profile/${account.id}`)}
                             className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-10 py-2.5 text-center me-2 mb-2 mt-4"

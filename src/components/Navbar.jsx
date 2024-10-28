@@ -98,7 +98,7 @@ export default function Navbar() {
                     className={`absolute top-full right-8 rounded-lg p-4 text-center flex flex-col items-center overflow-hidden transform transition-transform duration-200 ease-linear w-80 ${profileActive ? 'scale-100' : 'scale-0'} dark:bg-gray-900 bg-neutral-100 text-black dark:text-white`}
                     ref={profileRef}
                 >
-                    {account.name && account.jwtToken ? (<>
+                    {account.id ? (<>
                         <img src={account.avatar} className="h-40 w-40 rounded-full mx-auto mb-4" alt="" />
                         <h3 className="text-2xl text-black dark:text-white truncate">{account.name}</h3>
                         <p className="text-xl text-gray-600">{account.role}</p>

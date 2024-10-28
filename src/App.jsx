@@ -11,6 +11,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import ChatBot from './components/ChatBot';
+import ScrollToTop from './components/ScrollToTop';
 
 // Importing Pages
 import Home from './pages/Home';
@@ -24,6 +25,8 @@ import Profile from './pages/Profile';
 import VideoPage from './pages/VideoPage';
 import LoginForm from './pages/Login';
 import SignupForm from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -31,6 +34,7 @@ function App() {
       <DarkModeProvider>
         <SidebarProvider>
           <AccountProvider>
+            <ScrollToTop />
             <Routes>
               {/* Main layout with Navbar, Sidebar, Footer */}
               <Route path="/" element={<MainLayout />}>
@@ -48,6 +52,8 @@ function App() {
               <Route path="*" element={<NotFoundLayout />}>
                 <Route path="login" element={<LoginForm />} />
                 <Route path="signup" element={<SignupForm />} />
+                <Route path="forgot-password" element={<ForgotPassword />} />
+                <Route path="reset-password/:passwordToken" element={<ResetPassword />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

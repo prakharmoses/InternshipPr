@@ -1,6 +1,8 @@
 // src/hooks/useAuth.js
 import { useState, useContext, createContext } from 'react';
-// import { useNavigate } from 'react-router-dom';
+
+// Load environment variables
+const { REACT_APP_EXPRESS_APP_URL: EXPRESS_APP_URL } = process.env;
 
 const AuthContext = createContext();
 
@@ -24,14 +26,14 @@ function useProvideAuth() {
         email: '',
         avatar: '',
         cover: '',
-        role: ['student'],
+        roles: ['student'],
         admin: false,
         premium: false
     })
 
-    const signup = async (email, password, name, sex, confirmPassword) => {
+    const signup = async (email, password, name, sex, confirmPassword, dob) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/auth/register',
+            const response = await fetch(`${EXPRESS_APP_URL}/auth/register`,
                 {
                     method: 'POST',
                     headers: {
@@ -43,17 +45,19 @@ function useProvideAuth() {
                         name,
                         sex,
                         confirmPassword,
-                    })
+                        dob
+                    }),
+                    credentials: 'include' // Include credentials to receive cookies
                 }
             )
             const data = await response.json();
             if (response.status === 201) {
                 // Setting the account state
                 setAccount({
+                    ...account,
                     id: data.id,
                     name: name,
                     email: email,
-                    sex: sex,
                     avatar: data.avatar,
                     cover: data.cover,
                 })
@@ -65,7 +69,7 @@ function useProvideAuth() {
                     email: email,
                     avatar: data.avatar,
                     cover: data.cover,
-                    role: ['student'],
+                    roles: ['student'],
                     admin: false,
                     premium: false
                 }));
@@ -82,7 +86,7 @@ function useProvideAuth() {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch('http://127.0.0.1/5000/auth/', {
+            const response = await fetch(`${EXPRESS_APP_URL}/auth/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +94,8 @@ function useProvideAuth() {
                 body: JSON.stringify({
                     email,
                     password,
-                })
+                }),
+                credentials: 'include' // Include credentials to receive cookies
             })
             const data = await response.json();
 
@@ -102,7 +107,7 @@ function useProvideAuth() {
                     email: email,
                     avatar: data.avatar,
                     cover: data.cover,
-                    role: data.role,
+                    roles: data.roles,
                     admin: data.admin,
                     premium: data.premium,
                 });
@@ -114,35 +119,89 @@ function useProvideAuth() {
                     email: email,
                     avatar: data.avatar,
                     cover: data.cover,
-                    role: data.role,
+                    roles: data.roles,
                     admin: data.admin,
                     premium: data.premium,
                 }));
 
                 // Update the access token in local storage
                 localStorage.setItem('accessToken', data.accessToken);
+                return 'success';
             } else return data.message;
-            return account;
         } catch (error) {
             console.error('Login error:', error);
             throw error; // Re-throw to handle in the form
         }
     };
 
+    const refresh = async () => {
+        try {
+            const response = await fetch(`${EXPRESS_APP_URL}/auth/refresh`, {
+                method: 'GET',
+                credentials: 'include' // This ensures cookies are sent along with the request
+            })
+
+            const data = await response.json();
+            if (response.status === 200) {
+                // Setting the new access token in local storage
+                localStorage.setItem('accessToken', data.accessToken);
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('Refresh token error:', error);
+            localStorage.removeItem('account');
+            localStorage.removeItem('accessToken');
+            setAccount({
+                id: '',
+                name: '',
+                email: '',
+                avatar: '',
+                cover: '',
+                roles: ['student'],
+                admin: false,
+                premium: false
+            });
+            window.location.href = '/login';
+            throw error; // Re-throw to handle in the form
+        }
+    };
+
+    const callBackendApi = async (url, method, body) => {
+        try {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+            }
+
+            if (method !== 'GET' && body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(`${EXPRESS_APP_URL}${url}`, options);
+
+            if (response.status === 401 || response.status === 403) {
+                await refresh();
+                return await callBackendApi(url, method, body);
+            } else {
+                return response;
+            }
+        } catch (error) {
+            console.error('API call error: ', error);
+            throw new Error('API call error, failed to interact with backend.');
+        }
+    }
+
     const logout = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/auth/logout',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        cookies: JSON.parse(localStorage.getItem('accessToken')),
-                    })
-                }
-            )
-            
+            const response = await fetch(`${EXPRESS_APP_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include' // This ensures cookies are sent along with the request
+            });
+
             if (response.status === 200) {
                 localStorage.removeItem('account');
                 setAccount({
@@ -151,11 +210,11 @@ function useProvideAuth() {
                     email: '',
                     avatar: '',
                     cover: '',
-                    role: ['student'],
+                    roles: ['student'],
                     admin: false,
                     premium: false
                 });
-                window.location.reload();
+                window.location.href = '/login';
             } else {
                 alert('Logout failes! Please try after some time.');
             }
@@ -168,6 +227,8 @@ function useProvideAuth() {
         account,
         signup,
         login,
+        refresh,
+        callBackendApi,
         logout,
     };
 }
