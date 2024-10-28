@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
             enum: ['M', 'F', 'O'],
             default: 'O',
         },
+        dob: {
+            type: Date,
+            default: new Date('2000-01-01'),
+        },
         avatar: {
             type: String,
             default: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080',
@@ -34,7 +38,11 @@ const userSchema = new mongoose.Schema(
         },
         about: {
             type: String,
-            default: 'Hey there! I am an Angirasoft member.',
+            default: 'Hey there! I am an Angirasoft member. I am exploring the world of technology and learning new things every day.',
+        },
+        phoneNo: {
+            type: String,
+            default: '',
         },
         likes: [{
             type: mongoose.Schema.Types.ObjectId,

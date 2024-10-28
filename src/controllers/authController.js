@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const asyncHandler = require('express-async-handler');
+
+// Import config
+const transporter = require('../config/nodemailer');
 
 // Importing models
 const User = require('../models/user');
@@ -50,8 +54,8 @@ const login = asyncHandler(async (req, res) => {
 
     // Create secure cookie with refresh token
     res.cookie('jwt', refreshToken, {
-        httpOnly: true,                  // Accessible only by web server
-        secure: true,                    // https only
+        httpOnly: true,                                // Accessible only by web server
+        secure: true,
         sameSite: 'None',
         maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
     })
@@ -61,7 +65,11 @@ const login = asyncHandler(async (req, res) => {
         id: foundUser._id,
         avatar: foundUser.avatar,
         cover: foundUser.cover,
-        accessToken: accessToken
+        accessToken: accessToken,
+        name: foundUser.name,
+        admin: foundUser.roles.includes('admin'),
+        roles: foundUser.roles,
+        premium: foundUser.premium,
     })
 })
 
@@ -70,9 +78,9 @@ const login = asyncHandler(async (req, res) => {
 // @access Public
 const register = asyncHandler(async (req, res) => {
     // Get email and password from request body
-    const { email, password, name, sex, confirmPassword } = req.body;
+    const { email, password, name, sex, confirmPassword, dob } = req.body;
 
-    if (!email || !password || !name || !confirmPassword) {
+    if (!email || !password || !name || !password || !confirmPassword || !dob) {
         res.status(400);
         throw new Error('Kindly provide all the fields!');
     }
@@ -106,6 +114,7 @@ const register = asyncHandler(async (req, res) => {
         password: hashedPassword,
         name,
         sex: sex ? sex : 'O',
+        dob: new Date(dob),
     })
 
     // Save user to database
@@ -133,8 +142,8 @@ const register = asyncHandler(async (req, res) => {
 
     // Create secure cookie with refresh token
     res.cookie('jwt', refreshToken, {
-        httpOnly: true,                  // Accessible only by web server
-        secure: true,                    // https only
+        httpOnly: true,                                // Accessible only by web server
+        secure: true,
         sameSite: 'None',
         maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
     })
@@ -146,6 +155,103 @@ const register = asyncHandler(async (req, res) => {
         cover: savedUser.cover,
         accessToken: accessToken
     })
+})
+
+// @desc   Send reset password email
+// @route  GET /users/send-reset-password-email
+// @access Public
+const sendResetPasswordEmail = asyncHandler(async (req, res) => {
+    const { email } = req.params;
+
+    // Check if email is provided
+    if (!email) {
+        res.status(400);
+        throw new Error('Email is required');
+    }
+
+    // Check if user exists
+    const foundUser = await User.findOne({ email }).collation({ locale: 'en', strength: 2 }).exec();
+    if (!foundUser) {
+        res.status(401);
+        throw new Error('User not found');
+    }
+
+    // Generate the random key string and create its secure cookie with resetTokenHex
+    const resetTokenHex = crypto.randomBytes(64).toString('hex');
+    res.cookie('resetToken', resetTokenHex, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        maxAge: 10 * 60 * 1000,  // 10 minutes
+    })
+
+    // Generate the respective jwt token
+    const token = jwt.sign({ "email": email }, resetTokenHex, { expiresIn: '10m' });
+
+    // Send email
+    const link = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+    const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: email,
+        subject: 'Password Reset: Angirasoft',
+        text: `Click on the link to reset your password: ${link}`
+    }
+
+    await transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Error sending email' });
+        }
+        res.status(200).json({ success: true, message: 'Reset password email sent' });
+    })
+})
+
+// @desc   Reset password
+// @route  PATCH /users/resetPassword
+// @access Private
+const resetPassword = asyncHandler(async (req, res) => {
+    const { password, confirmPassword } = req.body;
+    const { jwtToken } = req.params;
+
+    // Check if email and password are provided
+    if (!password || !confirmPassword || !jwtToken) {
+        res.status(400);
+        throw new Error('Both passwords are required');
+    }
+
+    // Check if password satisfies the constraints
+    const PASS_REGEX = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    if (!PASS_REGEX.test(password)) {
+        res.status(400);
+        throw new Error('Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character');
+    }
+
+    // Accessing cookie resetToken
+    const cookie = req.cookies;
+    if (!cookie?.resetToken) {
+        res.status(403);
+        throw new Error('Forbidden, authorization error. Either the device has been changed or token is expired.');
+    }
+    const resetToken = cookie.resetToken;
+
+    // Decode the token
+    const decoded = jwt.verify(jwtToken, resetToken);
+    const { email } = decoded;
+
+    // Check if user exists
+    const foundUser = await User.findOne({ email }).collation({ locale: 'en', strength: 2 }).exec();
+    if (!foundUser) {
+        res.status(401);
+        throw new Error('Invalid email or password');
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the password
+    foundUser.password = hashedPassword;
+    await foundUser.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
 })
 
 // @desc   Refresh token
@@ -248,7 +354,7 @@ const updateRole = asyncHandler(async (req, res) => {
 // @route  POST /users/send-verification-email
 // @access Public
 const sendVerificationEmail = asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.params;
 
     // Check if email is provided
     if (!email) {
@@ -279,14 +385,13 @@ const sendVerificationEmail = asyncHandler(async (req, res) => {
     const token = jwt.sign({ "email": email }, process.env.EMAIL_VERIFICATION_SECRET, { expiresIn: '1d' });
 
     // Send email
-    const link = `http://localhost:5000/users/verify-email/${token}`;
+    const link = `${process.env.BACKEND_URL}/auth/verify-email/${token}`;
     const mailOptions = {
         from: process.env.EMAIL_ADDRESS,
         to: email,
         subject: 'Email Verification',
         text: `Click on the link to verify your email: ${link}`
     }
-    console.log('Transporter... ', transporter);
 
     await transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -329,7 +434,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
     foundUser.isEmailVerified = true;
     await foundUser.save();
 
-    res.status(200).redirect('http://localhost:3000');
+    res.status(200).redirect(process.env.FRONTEND_URL);
 })
 
 // @desc   Logout user
@@ -343,8 +448,12 @@ const logout = asyncHandler(async (req, res) => {
     if (!cookies?.jwt) {
         return res.status(204).json({ message: 'No content' });
     }
-    console.log("Here the cookie = ", cookies)
-    res.clearCookie('jwt', { httpOnly: true, secure: true, sameSite: 'None' })
+    
+    res.clearCookie('jwt', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None'
+    })
     res.status(200).json({ message: 'Cookies cleared' });
 })
 
@@ -352,6 +461,8 @@ module.exports = {
     login,
     register,
     refresh,
+    sendResetPasswordEmail,
+    resetPassword,
     updateRole,
     sendVerificationEmail,
     verifyEmail,

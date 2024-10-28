@@ -20,6 +20,10 @@ const courseSchema = new mongoose.Schema(
             enum: ['Development', 'Business', 'Finance', 'IT & Software', 'Office Productivity', 'Personal Development', 'Design', 'Marketing', 'Lifestyle', 'Photography', 'Health & Fitness', 'Music'],
             required: [true, 'Category is required'],
         },
+        date: {
+            type: Date,
+            default: Date.now(),
+        },
         status: {
             type: String,
             enum: ['ongoing', 'ended', 'upcoming'],
@@ -46,7 +50,12 @@ const courseSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Content',
             required: [true, 'Content is required'],
-        }]
+        }],
+        savedBy: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: [],
+        }],
     },
     {
         timestamps: true,

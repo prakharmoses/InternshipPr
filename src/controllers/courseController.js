@@ -20,6 +20,39 @@ const getCourses = asyncHandler(async (req, res) => {
     res.status(200).json(courses);
 });
 
+// @desc   Get total courses
+// @route  GET /courses/totalCourses
+// @access Public
+const getTotalCourses = asyncHandler(async (req, res) => {
+    const totalCourses = await Course.find().countDocuments().exec();
+    res.status(200).json({ totalCourses });
+})
+
+// @desc  Get top courses
+// @route GET /courses/topCourses/:number
+// @access Public
+const getTopCourses = asyncHandler(async (req, res) => {
+    const { number } = req.params;
+
+    // Check if number is empty
+    if (!number || !Number.isInteger(number) || isNaN(number) || number < 1 || number % 1 !== 0 || number >= 10) {
+        res.status(400);
+        throw new Error('Number is required and should be an integer less than 10');
+    }
+
+    const courses = await Course.find()
+        .sort({ savedBy: -1 }) // Sort in descending order by savedBy
+        .limit(parseInt(number))
+        .exec();
+
+    // Check if courses is empty
+    if (courses.length === 0) {
+        res.status(404).json({ message: 'No courses found' });
+    }
+
+    res.status(200).json(courses);
+})
+
 // @desc   Get one course
 // @route  GET /courses/oneCourse
 // @access Public
@@ -179,6 +212,8 @@ const deleteCourse = asyncHandler(async (req, res) => {
 
 module.exports = {
     getCourses,
+    getTotalCourses,
+    getTopCourses,
     getOneCourse,
     createCourse,
     updateCourse,

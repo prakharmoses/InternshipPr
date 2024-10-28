@@ -18,6 +18,14 @@ const getTutors = asyncHandler(async (req, res) => {
     res.status(200).json(tutors);
 });
 
+// @desc   Get total tutors
+// @route  GET /tutors/totalTutors
+// @access Public
+const getTotalTutors = asyncHandler(async (req, res) => {
+    const totalTutors = await Tutor.find().countDocuments().exec();
+    res.status(200).json({ totalTutors });
+})
+
 // @desc   Get one tutor
 // @route  GET /tutors/oneTutor
 // @access Public
@@ -136,6 +144,7 @@ const deleteTutor = asyncHandler(async (req, res) => {
 
 module.exports = {
     getTutors,
+    getTotalTutors,
     getOneTutor,
     createTutor,
     updateTutor,

@@ -17,7 +17,7 @@ const verifyJWT = (req, res, next) => {
         (err, decoded) => {
         if (err) {
             res.status(403);
-            throw new Error('Forbidden');
+            throw new Error('Forbidden in JWT verification');
         }
 
         req.userId = decoded.UserInfo.userId;

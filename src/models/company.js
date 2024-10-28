@@ -27,8 +27,7 @@ const companySchema = new mongoose.Schema(
     {
         _id: {
             type: mongoose.Schema.Types.ObjectId,
-            auto: true,
-            required: true,
+            auto: true
         },
         name: {
             type: String,
@@ -46,6 +45,10 @@ const companySchema = new mongoose.Schema(
             type: String,
             required: [true, 'Email is required'],
         },
+        category: [{
+            type: String,
+            default: []
+        }],
         website: {
             type: String,
             required: [true, 'Website is required'],
@@ -62,6 +65,11 @@ const companySchema = new mongoose.Schema(
             type: String,
             required: [true, 'Location is required'],
         },
+        totalPlaced: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }],
         feedback: [feedbackSchema],
     }, {
         _id: false,

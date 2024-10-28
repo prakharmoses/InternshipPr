@@ -88,6 +88,11 @@ const contentSchema = new mongoose.Schema(
             ref: 'User',
             required: true
         },
+        likedBy: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: [],
+        }],
         comments: [commentScema]
     },
     {

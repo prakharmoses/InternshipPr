@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 
 // Importing models
 const Company = require('../models/company');
+const User = require('../models/user');
 
 // @desc   Get all companies
 // @route  GET /companies
@@ -17,6 +18,84 @@ const getCompanies = asyncHandler(async (req, res) => {
 
     res.status(200).json(companies);
 });
+
+// @desc   GTotal placed students
+// @route  GET /companies/totalPlaced
+// @access Public
+const totalPlaced = asyncHandler(async (req, res) => {
+    const totalPlacedStudents = await Company.findById('671ccb037cc0a11faa6c1d32').select('totalPlaced').exec();
+    const totalPlaced = totalPlacedStudents.totalPlaced.length > 0 ? totalPlacedStudents.totalPlaced[0] : { totalPlaced: 0 };
+
+    res.status(200).json({ totalPlaced });
+})
+
+// @desc   Get feedback
+// @route  GET /companies/getFeedback
+// @access Public
+const getFeedback = asyncHandler(async (req, res) => {
+    const { companyId } = req.params; // Company ID from request parameters
+
+    const topFeedback = await Company.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(companyId) } },  // Match the specific company
+        { $unwind: "$feedback" },  // Unwind the feedback array
+        { $sort: { "feedback.rating": -1 } },  // Sort feedback by rating in descending order
+        {
+            $group: {
+                _id: "$feedback.userName",  // Group by userName to ensure uniqueness
+                topFeedback: { $first: "$feedback" }  // Select the top feedback entry for each userName
+            }
+        },
+        { $replaceRoot: { newRoot: "$topFeedback" } },  // Replace the root with the feedback object
+        { $sort: { "rating": -1 } },  // Re-sort by rating in descending order
+        { $limit: 12 }  // Limit to top 12 unique feedback entries
+    ]);
+
+    if (!topFeedback || topFeedback.length === 0) {
+        return res.status(404).json({ message: 'No feedback found for this company' });
+    }
+
+    // Return the top feedback array
+    res.status(200).json(topFeedback[0].feedback);
+})
+
+// @desc   Add feedback
+// @route  POST /companies/addFeedback
+// @access Private
+const addFeedback = asyncHandler(async (req, res) => {
+    const { companyId, rating, comment } = req.body;  // Company ID, rating, and comment from request body
+    const { userId } = req.userId;  // User name from request user object
+
+    // Check if all fields are given
+    if (!companyId || !rating || !comment) {
+        res.status(400);
+        throw new Error('All fields are required');
+    }
+
+    // Check if company exists
+    const company = await Company.findById(companyId).exec();
+    if (!company) {
+        res.status(404);
+        throw new Error('Company not found');
+    }
+
+    // Check for the user and authorization
+    const foundUser = await User.findById(userId).exec();
+    if (!foundUser) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Add feedback to company
+    company.feedback.push({
+        userName: foundUser.name,
+        userAvatar: foundUser.avatar,
+        rating,
+        comment
+    });
+    await company.save();
+
+    res.status(201).json(company.feedback);
+})
 
 // @desc   Get one company
 // @route  GET /companies/oneCompany
@@ -39,6 +118,21 @@ const getOneCompany = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json(company);
+})
+
+// @desc   Get all categories
+// @route  GET /companies/getCategories
+// @access Public
+const getCategories = asyncHandler(async (req, res) => {
+    const categories = await Company.findById('671ccb037cc0a11faa6c1d32').select('category').exec();
+
+    // If no categories found
+    if (!categories) {
+        res.status(404);
+        throw new Error('No categories found');
+    }
+
+    res.status(200).json(categories.category);
 })
 
 // @desc   Create company
@@ -160,7 +254,11 @@ const deleteCompany = asyncHandler(async (req, res) => {
 
 module.exports = {
     getCompanies,
+    totalPlaced,
+    getFeedback,
+    addFeedback,
     getOneCompany,
+    getCategories,
     createCompany,
     updateCompany,
     deleteCompany
