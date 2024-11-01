@@ -12,25 +12,18 @@ const tutorSchema = new mongoose.Schema(
             required: [true, 'Id is required'],
             ref: 'User',
         },
-        name: {
-            type: String,
-            required: [true, 'Name is required'],
-        },
         tag: {
             type: String,
             required: [true, 'Tag is required'],
+            default: 'Tutor',
+            maxlength: [20, 'Tag must be less than 20 characters'],
         },
         courses: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Course',
             default: [],
         }],
-        videos: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Video',
-            default: [],
-        }],
-        likes: [{
+        content: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Content',
             default: [],

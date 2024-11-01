@@ -24,7 +24,7 @@ const getCompanies = asyncHandler(async (req, res) => {
 // @access Public
 const totalPlaced = asyncHandler(async (req, res) => {
     const totalPlacedStudents = await Company.findById('671ccb037cc0a11faa6c1d32').select('totalPlaced').exec();
-    const totalPlaced = totalPlacedStudents.totalPlaced.length > 0 ? totalPlacedStudents.totalPlaced[0] : { totalPlaced: 0 };
+    const totalPlaced = totalPlacedStudents.totalPlaced.length > 0 ? totalPlacedStudents.totalPlaced[0] : 0;
 
     res.status(200).json({ totalPlaced });
 })
@@ -124,7 +124,14 @@ const getOneCompany = asyncHandler(async (req, res) => {
 // @route  GET /companies/getCategories
 // @access Public
 const getCategories = asyncHandler(async (req, res) => {
-    const categories = await Company.findById('671ccb037cc0a11faa6c1d32').select('category').exec();
+    const { companyId } = req.params;
+
+    // Check if companyId given
+    if (!companyId) {
+        res.status(400);
+        throw new Error('Company ID is required');
+    }
+    const categories = await Company.findById(companyId).select('category').exec();
 
     // If no categories found
     if (!categories) {

@@ -45,31 +45,43 @@ const getOneTutor = asyncHandler(async (req, res) => {
 // @route  POST /tutors/create
 // @access Private
 const createTutor = asyncHandler(async (req, res) => {
-    const { email, name, id, tag } = req.body;
+    const { userId, roles, email } = req;
 
-    // Check if all fields are provided
-    if (!email || !name || !id || !tag) {
-        res.status(400);
-        throw new Error('All fields are required');
+    // Check if user exists
+    const userFound = await User.findById(userId).exec();
+    if (!userFound) {
+        res.status(404);
+        throw new Error('User not found');
     }
 
-    // Check if tutor already exists
-    const foundTutor = await Tutor.findOne({ email }).collation({ locale: 'en', strength: 2 }).exec();
-    if (foundTutor) {
-        res.status(400);
+    // Check if tutor exists
+    if (roles.includes('tutor')) {
+        res.status(409);
         throw new Error('Tutor already exists');
+    }
+
+    // Check if the user's email is verified
+    if (!userFound.isVerified) {
+        const verificationResponse = await fetch(`/auth/send-verification-email/${email}`, {
+            method: 'GET',
+            headers: {
+                Authorization: req.headers.authorization
+            }
+        });
+        if (verificationResponse.status !== 200) {
+            res.status(417);
+            throw new Error('Email not verified');
+        }
     }
 
     // Create new tutor
     const newTutor = new Tutor({
-        email,
-        name,
-        id,
-        tag
+        email: email,
+        id: userId
     });
     await newTutor.save();
 
-    res.status(201).json(newTutor);
+    res.status(201).json({ message: 'Tutor created' });
 })
 
 // @desc   Update tutor

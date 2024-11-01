@@ -165,6 +165,13 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         throw new Error('Email is required');
     }
 
+    // Check if email is unique or not
+    const foundUser = await User.findOne({ email }).collation({ locale: 'en', strength: 2 }).exec();
+    if (foundUser && foundUser._id !== req.userId) {
+        res.status(409);
+        throw new Error('Email already taken');
+    }
+
     // Check if DoB is provided in correct format
     if (dob && isNaN(Date.parse(dob))) {
         res.status(400);
@@ -178,7 +185,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     // Check if user exists
-    const updatedUser = await User.findOne({ email }).collation({ locale: 'en', strength: 2 }).exec();
+    const updatedUser = await User.findById(req.userId).exec();
     if (!updatedUser) {
         res.status(401);
         throw new Error('User not found');
