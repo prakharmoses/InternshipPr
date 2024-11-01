@@ -14,6 +14,7 @@ import { useAccount } from '../hooks/useAuth.js';
 // Importing Components
 import Modal from '../components/Modal';
 import CourseCard from '../components/CourseCard';
+import MyCourses from '../components/MyCourses';
 
 export default function Profile() {
   const { sidebarActive } = useSidebar();
@@ -271,10 +272,11 @@ export default function Profile() {
               </div>}
             </div>
             <div className="relative top-[-4rem] right-[5rem] flex max-sm:flex-wrap max-sm:justify-center items-center gap-4 z-20">
-              <button onClick={() => setTab('about')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">About</button>
-              {profileId === account.id && <button onClick={() => setTab('likes')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Likes</button>}
-              {profileId === account.id && <button onClick={() => setTab('comment')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Comments</button>}
-              <button onClick={() => setTab('playlist')} className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 dark:bg-stone-900 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100">Saved Playlists</button>
+              <button onClick={() => setTab('about')} className={`rounded-full py-3 px-6 ${tab !== 'about' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>About</button>
+              {profileId === account.id && <button onClick={() => setTab('likes')} className={`rounded-full py-3 px-6 ${tab !== 'likes' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Likes</button>}
+              {profileId === account.id && <button onClick={() => setTab('comment')} className={`rounded-full py-3 px-6 ${tab !== 'comment' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Comments</button>}
+              <button onClick={() => setTab('playlist')} className={`rounded-full py-3 px-6 ${tab !== 'playlist' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Saved Playlists</button>
+              {profileId === account.id && <button onClick={() => setTab('mycourses')} className={`rounded-full py-3 px-6 ${tab !== 'mycourses' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>My Courses</button>}
             </div>
             <button
               onClick={() => setEdit(true)}
@@ -378,6 +380,7 @@ export default function Profile() {
             )) : <div className="col-span-12 text-center text-gray-500 dark:text-gray-400">No saved playlists found.</div>}
           </div>
         )}
+        {profileId === account.id && tab === 'mycourses' && <MyCourses />}
       </section>
 
       {edit && (

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { FaTimes, FaHome, FaQuestion, FaGraduationCap, FaChalkboardTeacher, FaHeadset } from 'react-icons/fa';
+import { FaHome, FaQuestion, FaGraduationCap, FaChalkboardTeacher, FaHeadset } from 'react-icons/fa';
+import { RiMiniProgramLine } from "react-icons/ri";
 import { Link, useNavigate } from 'react-router-dom';
 
 // Importing Context
@@ -66,6 +67,7 @@ export default function Sidebar() {
                     </>)}
                 </div>
                 <nav className="flex flex-col">
+                    <h2 className='p-2 text-gray-600 dark:text-gray-400'>General</h2>
                     <Link to="/" className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <FaHome className="mr-4 text-xl" />
                         <span className='transition-transform duration-300 group-hover:translate-x-4'>Home</span>
@@ -85,6 +87,12 @@ export default function Sidebar() {
                     <Link to="/contact" className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <FaHeadset className="mr-4 text-xl" />
                         <span className='transition-transform duration-300 group-hover:translate-x-4'>Contact Us</span>
+                    </Link>
+
+                    <h2 className='p-2 text-gray-600 dark:text-gray-400'>Tutors</h2>
+                    <Link to={`/profile/${account.id}?tab=mycourses`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <RiMiniProgramLine className="mr-4 text-xl" />
+                        <span className='transition-transform duration-300 group-hover:translate-x-4'>My Courses</span>
                     </Link>
                 </nav>
             </div>

@@ -113,7 +113,7 @@ export default function AboutUs() {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/company/getFeedback/${process.env.REACT_APP_COMPANY_ID}`);
+            const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/company/getFeedback/${process.env.REACT_APP_COMPANY_ID}`);
             const data = await response.json();
 
             if (response.status === 200) {
@@ -146,7 +146,7 @@ export default function AboutUs() {
     useEffect(() => {
         const fetchBrilliantStudents = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/users/totalStudents`);
+                const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/users/totalStudents`);
                 const data = await response.json();
 
                 if (response.status !== 200) {
@@ -183,7 +183,7 @@ export default function AboutUs() {
 
         const fetchOnlineCourses = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/courses/totalCourses`);
+                const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/courses/totalCourses`);
                 const data = await response.json();
 
                 if (response.status !== 200) {
@@ -220,7 +220,7 @@ export default function AboutUs() {
 
         const fetchTutors = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/tutors/totalTutors`);
+                const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/tutors/totalTutors`);
                 const data = await response.json();
 
                 if (response.status !== 200) {
@@ -260,13 +260,18 @@ export default function AboutUs() {
     useEffect(() => {
         const fetchPlacements = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/company/totalPlaced`);
+                const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/company/totalPlaced`);
                 const data = await response.json();
 
                 if (response.status !== 200) {
                     throw new Error(data.message);
                 }
-                const totalPlacedPercentage = (data.totalPlaced / brilliantStudents) * 100;
+                let totalPlacedPercentage = 0;
+                if (brilliantStudents !== 0) {
+                    totalPlacedPercentage = (data.totalPlaced / brilliantStudents) * 100;
+                } else {
+                    totalPlacedPercentage = 0;
+                }
                 setPlacements(`${totalPlacedPercentage}%`);
             } catch (error) {
                 console.error(error);
