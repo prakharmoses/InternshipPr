@@ -25,6 +25,12 @@ const getCourses = asyncHandler(async (req, res) => {
 // @access Public
 const getTotalCourses = asyncHandler(async (req, res) => {
     const totalCourses = await Course.find().countDocuments().exec();
+
+    // Check if no courses are found
+    if (totalCourses === 0) {
+        return res.status(404).json({ message: 'No courses found' });
+    }
+
     res.status(200).json({ totalCourses });
 })
 
@@ -32,7 +38,8 @@ const getTotalCourses = asyncHandler(async (req, res) => {
 // @route GET /courses/topCourses/:number
 // @access Public
 const getTopCourses = asyncHandler(async (req, res) => {
-    const { number } = req.params;
+    // Parse `number` from the URL params and convert it to an integer
+    const number = parseInt(req.params.number, 10);
 
     // Check if number is empty
     if (!number || !Number.isInteger(number) || isNaN(number) || number < 1 || number % 1 !== 0 || number >= 10) {
@@ -42,12 +49,12 @@ const getTopCourses = asyncHandler(async (req, res) => {
 
     const courses = await Course.find()
         .sort({ savedBy: -1 }) // Sort in descending order by savedBy
-        .limit(parseInt(number))
+        .limit(number)
         .exec();
 
     // Check if courses is empty
     if (courses.length === 0) {
-        res.status(404).json({ message: 'No courses found' });
+        return res.status(404).json({ message: 'No courses found' });
     }
 
     res.status(200).json(courses);
