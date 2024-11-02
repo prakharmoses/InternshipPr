@@ -107,8 +107,10 @@ export default function Home() {
               const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/courses/topCourses/6`);
               const data = await response.json();
 
-              if (response.ok) {
+              if (response.status === 200) {
                   setCourses(data.courses);
+              } else if (response.status === 404) {
+                  setCourses([]);
               } else {
                   console.error(data.message);
                   throw new Error(data.message);
@@ -155,7 +157,7 @@ export default function Home() {
       // Initialise the category icons
 
       // Initialise the Courses
-      // fetchTopCourses();
+      fetchTopCourses();
 
       // Fetch the account insights
       fetchProfileInsights();
@@ -267,7 +269,7 @@ export default function Home() {
                     </Link>
                   ))}
                 </div>
-              </div> : <div className="text-center">No categories found</div>}
+              </div> : <div className="text-center text-gray-900 dark:text-gray-100">No categories found</div>}
             </section>
 
             {!account.roles.includes('tutor') && <div className="bg-white dark:bg-black rounded-lg p-6 shadow-[0_0_20px_3px_#d48aff] dark:shadow-[0_0_20px_3px_#a91efa]">

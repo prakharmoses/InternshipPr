@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react'
 // Importing context
 import { useSidebar } from '../context/SidebarContext';
 
+// Import hooks
+import { useAccount } from '../hooks/useAuth';
+
 // Importing components
 import CourseCard from '../components/CourseCard';
 
@@ -47,6 +50,7 @@ const filters = [
 
 export default function Courses() {
   const { sidebarActive } = useSidebar();
+  const { callBackendApi } = useAccount();
 
   // Defining State
   const [courses, setCourses] = useState([
@@ -67,7 +71,25 @@ export default function Courses() {
 
   // Defining functions
   useEffect(() => {
-    // Fetching data from API
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/courses/totalCourses`);
+        const data = await response.json();
+
+        if (response.status === 200) {
+          setCourses(data.courses);
+        } else if (response.status === 404) {
+          setCourses([]);
+        } else {
+          console.error(data.message);
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+    fetchCourses();
   }, []);
 
   return (
@@ -93,8 +115,8 @@ export default function Courses() {
             </div>
           </div>
         </div>
-        
-        <div className={`grid grid-cols-1 gap-6 px-4 ${!sidebarActive ? 'sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3'}`}>
+
+        {Array.isArray(courses) && courses.length > 0 ? (<div className={`grid grid-cols-1 gap-6 px-4 ${!sidebarActive ? 'sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3'}`}>
           {courses.map((course, idx) => (
             <CourseCard
               key={idx}
@@ -108,6 +130,11 @@ export default function Courses() {
             />
           ))}
         </div>
+        ) : (
+          <div className="flex justify-center items-center h-[50vh]">
+            <p className="text-2xl font-semibold text-center text-gray-500 dark:text-gray-400">No courses found</p>
+          </div>
+        )}
       </section>
     </main>
   )
