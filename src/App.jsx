@@ -29,6 +29,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import NewContent from './pages/NewContent';
 import AdminDashboard from './pages/AdminDashboard';
+import TutorControlls from './pages/TutorControlls';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                 <Route path="content/:contentLink" element={<VideoPage />} />
                 <Route path="content/:courseId/new-content" element={<NewContent />} />
                 <Route path="admin" element={<AdminDashboard />} />
+                <Route path="tutorControlls" element={<TutorControlls />} />
               </Route>
 
               {/* NotFound page layout without Navbar, Sidebar, Footer */}

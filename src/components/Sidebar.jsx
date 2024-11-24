@@ -8,6 +8,7 @@ import { useAccount } from '../hooks/useAuth.js'
 // Import icons
 import { FaHome, FaQuestion, FaGraduationCap, FaChalkboardTeacher, FaHeadset } from 'react-icons/fa';
 import { RiMiniProgramLine, RiDashboardFill } from "react-icons/ri";
+import { MdOutlineManageAccounts } from "react-icons/md";
 
 // Importing Assets
 import profile from '../assets/pic-1.jpg';
@@ -101,6 +102,10 @@ export default function Sidebar() {
                     <Link to={`/admin`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <RiDashboardFill className="mr-4 text-xl" />
                         <span className='transition-transform duration-300 group-hover:translate-x-4'>Dashboard</span>
+                    </Link>
+                    <Link to={`/tutorControlls`} className="flex items-center p-4 mt-[-0.5rem] transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <MdOutlineManageAccounts className="mr-4 text-xl" />
+                        <span className='transition-transform duration-300 group-hover:translate-x-4'>Tutor Controls</span>
                     </Link>
                 </nav>
             </div>

@@ -5,6 +5,10 @@ import { useSidebar } from "../context/SidebarContext";
 
 // Import components
 import CardDataStats from "../components/CardDataStats";
+import ChartOne from "../components/charts/ChartOne";
+import ChartTwo from "../components/charts/ChartTwo";
+import ChartThree from "../components/charts/ChartThree";
+import ProductTable from "../components/tables/ProductTable";
 
 export default function AdminDashboard() {
     const { sidebarActive } = useSidebar();
@@ -96,6 +100,19 @@ export default function AdminDashboard() {
                         />
                     </svg>
                 </CardDataStats>
+            </div>
+
+            <div className="mt-4 flex flex-row md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5 px-10">
+                <ChartThree />
+                <ChartTwo />
+            </div>
+
+            <div className="mt-4 flex md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
+                <ChartOne />
+            </div>
+
+            <div className="mt-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5 px-6">
+                <ProductTable />
             </div>
         </main>
     )
