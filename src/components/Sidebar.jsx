@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { FaHome, FaQuestion, FaGraduationCap, FaChalkboardTeacher, FaHeadset } from 'react-icons/fa';
-import { RiMiniProgramLine } from "react-icons/ri";
 import { Link, useNavigate } from 'react-router-dom';
 
 // Importing Context
 import { useSidebar } from '../context/SidebarContext';
 import { useAccount } from '../hooks/useAuth.js'
+
+// Import icons
+import { FaHome, FaQuestion, FaGraduationCap, FaChalkboardTeacher, FaHeadset } from 'react-icons/fa';
+import { RiMiniProgramLine, RiDashboardFill } from "react-icons/ri";
 
 // Importing Assets
 import profile from '../assets/pic-1.jpg';
@@ -66,7 +68,7 @@ export default function Sidebar() {
                         >Login</button>
                     </>)}
                 </div>
-                <nav className="flex flex-col">
+                <nav className="flex flex-col overflow-y-auto max-h-[calc(100vh-18rem)] scrollbar-thin scrollbar-thumb-black dark:scrollbar-thumb-blue-500 scrollbar-track-transparent">
                     <h2 className='p-2 text-gray-600 dark:text-gray-400'>General</h2>
                     <Link to="/" className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <FaHome className="mr-4 text-xl" />
@@ -93,6 +95,12 @@ export default function Sidebar() {
                     <Link to={`/profile/${account.id}?tab=mycourses`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <RiMiniProgramLine className="mr-4 text-xl" />
                         <span className='transition-transform duration-300 group-hover:translate-x-4'>My Courses</span>
+                    </Link>
+
+                    <h2 className='p-2 text-gray-600 dark:text-gray-400'>Admin</h2>
+                    <Link to={`/admin`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <RiDashboardFill className="mr-4 text-xl" />
+                        <span className='transition-transform duration-300 group-hover:translate-x-4'>Dashboard</span>
                     </Link>
                 </nav>
             </div>

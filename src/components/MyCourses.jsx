@@ -114,7 +114,6 @@ const MyCourses = () => {
 
     return (
         <main className="mx-auto px-4 sm:px-8 mt-14">
-            {/* <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 my-6">My Courses</h2> */}
             <div className="mt-20 mb-16 w-full flex flex-row items-center justify-around">
                 <div className="flex flex-row gap-4">
                     {filters.map((filter, idx) => (
@@ -148,188 +147,146 @@ const MyCourses = () => {
                 </div>
             </div>
 
-            {newCourseModalOpen && (<Modal title={`${title.slice(0, 25)} ${title.length > 25 ? '...' : ''}`} closeModal={() => setNewCourseModalOpen(false)} >
-                {/* <form onSubmit={handleCreateCourse} className="grid grid-cols-1 gap-4">
-                    <div className="flex flex-col">
-                        <label htmlFor="title" className="text-sm font-medium text-stone-600 dark:text-stone-400">Title</label>
-                        <input
-                            type="text"
-                            id="title"
-                            className="mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+            {newCourseModalOpen && (
+                <Modal title={`New Course: ${title.slice(0, 25)} ${title.length > 25 ? '...' : ''}`} closeModal={() => setNewCourseModalOpen(false)} >
+                    <div className="relative shadow-[rgba(0,_0,_0,_0.2)_0px_60px_40px_-7px] px-6 py-4 bg-purple-100 dark:bg-transparent">
+                        {/* Background Image */}
+                        <div
+                            className="absolute inset-0 bg-cover bg-center opacity-0 dark:opacity-70"
+                            style={{ backgroundImage: `url('/beautiful-forest-landscape.jpg')` }}
                         />
-                    </div>
-                    <div className="flex flex-col">
-                        <label htmlFor="description" className="text-sm font-medium text-stone-600 dark:text-stone-400">Description</label>
-                        <textarea
-                            id="description"
-                            className="mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <label htmlFor="category" className="text-sm font-medium text-stone-600 dark:text-stone-400">Category</label>
-                        <select
-                            id="category"
-                            className="mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            <option value="">Select a category</option>
-                            <option value="development">Development</option>
-                            <option value="business">Business</option>
-                            <option value="management">Management</option>
-                        </select>
-                    </div>
-                    <div className="flex flex-col">
-                        <label htmlFor="thumbnail" className="text-sm font-medium text-stone-600 dark:text-stone-400">Thumbnail</label>
-                        <input
-                            type="file"
-                            id="thumbnail"
-                            className="mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                            value={thumbnail}
-                            onChange={(e) => setThumbnail(e.target.value)}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4"
-                    >Create Course</button>
-                </form> */}
-                <form onSubmit={handleCreateCourse} className="shadow-[rgba(0,_0,_0,_0.2)_0px_60px_40px_-7px] px-6 py-4">
-                    <img
-                        src={thumbnail}
-                        alt="Uploaded Thumbnail Preview"
-                        className="mt-2 w-full h-auto rounded-lg border border-gray-300 dark:border-gray-700 shadow-md"
-                    />
-                    <div className="space-y-12">
-                        <div className="border-b border-gray-900/10 pb-12">
-                            {/* <h2 className="text-base/7 font-semibold text-gray-900">New Course: {title.slice(0,25)} {title.length > 25 && '...'}</h2> */}
-                            {/* <p className="mt-1 text-sm/6 text-gray-600">
-                                This information will be displayed publicly so be careful what you share.
-                            </p> */}
 
-                            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                <div className="sm:col-span-4">
-                                    <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
-                                        Title of Course
-                                    </label>
-                                    <div className="mt-2">
-                                        <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                            <input
-                                                id="username"
-                                                name="username"
-                                                type="text"
-                                                placeholder="Title of Course"
-                                                autoComplete="on"
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
-                                                className="block flex-1 border-0 bg-transparent py-1.5 px-2 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-0 sm:text-sm/6"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+                        {/* Form Content */}
+                        <form onSubmit={handleCreateCourse} className="relative z-10 px-6 py-4">
 
-                                <div className="col-span-full">
-                                    <label htmlFor="about" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
-                                        Description
-                                    </label>
-                                    <div className="mt-2">
-                                        <textarea
-                                            id="about"
-                                            name="about"
-                                            rows={3}
-                                            className="block w-full px-2 rounded-md border-0 py-1.5 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-400 sm:text-sm/6"
-                                            value={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                        />
-                                    </div>
-                                    <p className="mt-3 text-sm/6 text-gray-600 dark:text-gray-400">Write a few sentences about yourself.</p>
-                                </div>
-
-                                <div className="col-span-full">
-                                    <label htmlFor="cover-photo" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
-                                        Thumbnail
-                                    </label>
-                                    <div className="flex items-center justify-center w-full">
-                                        <label for="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                                </svg>
-                                                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px) of 16:9 ratio</p>
+                            {thumbnail && <img
+                                src={thumbnail}
+                                alt="Uploaded Thumbnail Preview"
+                                className="mt-2 w-full h-auto rounded-lg border border-gray-300 dark:border-gray-700 shadow-md"
+                            />}
+                            <div className="space-y-12">
+                                <div className="border-b border-gray-900/10 pb-12">
+                                    <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                        <div className="sm:col-span-4">
+                                            <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
+                                                Title of Course
+                                            </label>
+                                            <div className="mt-2">
+                                                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                                                    <input
+                                                        id="title"
+                                                        name="title"
+                                                        type="text"
+                                                        placeholder="Title of Course"
+                                                        autoComplete="on"
+                                                        value={title}
+                                                        onChange={(e) => setTitle(e.target.value)}
+                                                        className="block flex-1 border-0 bg-gray-100 dark:bg-gray-900 py-1.5 px-2 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-0 sm:text-sm/6"
+                                                    />
+                                                </div>
                                             </div>
-                                            <input
-                                                id="dropzone-file"
-                                                type="file"
-                                                className="hidden"
-                                                // value={thumbnail}
-                                                onChange={handleChangeThumbnail}
-                                                accept="image/*"
-                                            />
-                                        </label>
-                                    </div>
-                                    {/* Image preview section */}
-                                    {thumbnail && (
-                                        <div className="mt-4 flex flex-col items-center">
-                                            <p className="text-sm text-green-600 dark:text-green-400 font-medium">Image uploaded successfully! Check above.</p>
                                         </div>
-                                    )}
+
+                                        <div className="col-span-full">
+                                            <label htmlFor="about" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
+                                                Description
+                                            </label>
+                                            <div className="mt-2">
+                                                <textarea
+                                                    id="about"
+                                                    name="about"
+                                                    rows={3}
+                                                    className="block w-full px-2 rounded-md border-0 py-1.5 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-400 sm:text-sm/6"
+                                                    value={description}
+                                                    onChange={(e) => setDescription(e.target.value)}
+                                                />
+                                            </div>
+                                            <p className="mt-3 text-sm/6 text-gray-800 dark:text-gray-200">Write a few sentences about yourself.</p>
+                                        </div>
+
+                                        <div className="col-span-full">
+                                            <label htmlFor="cover-photo" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
+                                                Thumbnail
+                                            </label>
+                                            <div className="flex items-center justify-center w-full">
+                                                <label for="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                        </svg>
+                                                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px) of 16:9 ratio</p>
+                                                    </div>
+                                                    <input
+                                                        id="dropzone-file"
+                                                        type="file"
+                                                        className="hidden"
+                                                        // value={thumbnail}
+                                                        onChange={handleChangeThumbnail}
+                                                        accept="image/*"
+                                                    />
+                                                </label>
+                                            </div>
+                                            {/* Image preview section */}
+                                            {thumbnail && (
+                                                <div className="mt-4 flex flex-col items-center">
+                                                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">Image uploaded successfully! Check above.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="border-b border-gray-900/10 pb-12">
+                                    <div className="mt-10 space-y-10">
+                                        <fieldset>
+                                            <legend className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">Category:</legend>
+                                            <ul className="grid w-full gap-6 md:grid-cols-2">
+                                                {categoryArray.map((category, idx) => (
+                                                    <li key={idx}>
+                                                        <input
+                                                            type="radio"
+                                                            id={`category-${idx}`}
+                                                            name="category"
+                                                            value={category}
+                                                            className="hidden peer"
+                                                            required
+                                                            onChange={(e) => setCategory(e.target.value)}
+                                                        />
+                                                        <label
+                                                            htmlFor={`category-${idx}`}
+                                                            className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-green-500 peer-checked:border-green-600 peer-checked:text-green-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
+                                                        >
+                                                            <div className="block">
+                                                                <div className="w-full text-lg font-semibold">{category}</div>
+                                                            </div>
+                                                            <svg className="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                                                            </svg>
+                                                        </label>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </fieldset>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="border-b border-gray-900/10 pb-12">
-                            <div className="mt-10 space-y-10">
-                                <fieldset>
-                                    <legend className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">Category:</legend>
-                                    <ul className="grid w-full gap-6 md:grid-cols-2">
-                                        {categoryArray.map((category, idx) => (
-                                            <li key={idx}>
-                                                <input
-                                                    type="radio"
-                                                    id={`category-${idx}`}
-                                                    name="category"
-                                                    value={category}
-                                                    className="hidden peer"
-                                                    required
-                                                    onChange={(e) => setCategory(e.target.value)}
-                                                />
-                                                <label
-                                                    htmlFor={`category-${idx}`}
-                                                    className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
-                                                >
-                                                    <div className="block">
-                                                        <div className="w-full text-lg font-semibold">{category}</div>
-                                                    </div>
-                                                    <svg className="w-5 h-5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                                    </svg>
-                                                </label>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </fieldset>
+                            <div className="mt-6 flex items-center justify-end gap-x-6">
+                                <button type="button" onClick={() => setNewCourseModalOpen(false)} className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                >
+                                    Save
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-
-                    <div className="mt-6 flex items-center justify-end gap-x-6">
-                        <button type="button" onClick={() => setNewCourseModalOpen(false)} className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </Modal>)}
+                </Modal>
+            )}
 
             <div className={`${sidebarActive ? 'flex flex-col gap-4' : 'grid grid-cols-2 gap-4 px-4'}`}>
                 {courses.length > 0 ? courses.map(course => (

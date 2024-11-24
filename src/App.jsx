@@ -27,6 +27,8 @@ import LoginForm from './pages/Login';
 import SignupForm from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import NewContent from './pages/NewContent';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -46,6 +48,8 @@ function App() {
                 <Route path="course/:courseId" element={<CourseDetails />} />
                 <Route path="profile/:profileId" element={<Profile />} />
                 <Route path="content/:contentLink" element={<VideoPage />} />
+                <Route path="content/:courseId/new-content" element={<NewContent />} />
+                <Route path="admin" element={<AdminDashboard />} />
               </Route>
 
               {/* NotFound page layout without Navbar, Sidebar, Footer */}
