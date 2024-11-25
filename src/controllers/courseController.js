@@ -43,7 +43,7 @@ const getCourses = asyncHandler(async (req, res) => {
 
     // Check if no courses are found
     if (courses.length === 0) {
-        return res.status(404)
+        res.status(404)
         throw new Error('No courses found');
     }
 
@@ -114,7 +114,7 @@ const getTopCourses = asyncHandler(async (req, res) => {
 })
 
 // @desc   Get one course
-// @route  GET /courses/oneCourse
+// @route  GET /courses/getOneCourse/:courseId
 // @access Public
 const getOneCourse = asyncHandler(async (req, res) => {
     const { courseId } = req.params;
@@ -126,13 +126,33 @@ const getOneCourse = asyncHandler(async (req, res) => {
     }
 
     // Checkk if the course exists
-    const course = await Course.findOne({ title }).collation({ locale: 'en', strength: 2 }).exec();
-    if (!course) {
+    const courseDetails = await Course.aggregate([
+        {
+            $match: { _id: new mongoose.Types.ObjectId(courseId) }
+        },
+        {
+            $project: {
+                id: '$_id',
+                title: 1,
+                description: 1,
+                tutorId: '$tutor',
+                tutorName: 1,
+                tutorImg: '$tutorAvatar',
+                thumbImg: '$thumbnail',
+                content: 1,
+                date: '$createdAt',
+                saved: { $in: [new mongoose.Types.ObjectId(req.userId), '$savedBy'] },
+            }
+        }
+    ]);
+
+    // Check if courseDetails is empty
+    if (courseDetails.length === 0) {
         res.status(404);
         throw new Error('Course not found');
     }
 
-    res.status(200).json(courseId);
+    res.status(200).json(courseDetails[0]);
 })
 
 // @desc   Create course
@@ -287,6 +307,101 @@ const deleteCourse = asyncHandler(async (req, res) => {
     res.status(204).json({ message: 'No content' });
 })
 
+// @desc   Save course
+// @route  PATCH /courses/saveCourse/:courseId
+// @access Private
+const saveCourse = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+
+    // Check if courseId is empty
+    if (!courseId) {
+        res.status(400);
+        throw new Error('Course ID is required');
+    }
+
+    // Check if the course exists
+    const course = await Course.findById(courseId).exec();
+    if (!course) {
+        res.status(404);
+        throw new Error('Course not found');
+    }
+
+    // Check if the course is already saved
+    const user = await User.findById(req.userId).exec();
+    if (!user) {
+        res.status(400);
+        throw new Error('User does not exist!');
+    }
+
+    if (user.saved.includes(courseId)) {
+        // Remove course
+        user.saved = user.saved.filter(item => item.toString() !== courseId.toString());
+        await user.save();
+
+        // Remove user from course's savedBy
+        course.savedBy = course.savedBy.filter(item => item.toString() !== req.userId.toString());
+        await course.save();
+
+        res.status(200).json({ message: false });
+    } else {
+        // Save course
+        user.saved.push(courseId);
+        await user.save();
+
+        // Add user to course's savedBy
+        course.savedBy.push(req.userId);
+        await course.save();
+
+        res.status(200).json({ message: true });
+    }
+})
+
+// @desc   Get saved courses
+// @route  GET /courses/getSavedCourses/:userId
+// @access Private
+const getSavedCourses = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+
+    // Check if userId is empty
+    if (!userId) {
+        res.status(400);
+        throw new Error('User ID is required');
+    }
+
+    // Check if saved courses are present
+    const foundUserPlaylist = await User.findById(userId).select('saved').exec();
+    if (!foundUserPlaylist || foundUserPlaylist.saved.length === 0) {
+        res.status(404);
+        throw new Error('User playlist is empty');
+    }
+    
+    // Get saved courses
+    const savedCourses = await Course.aggregate([
+        {
+            $match: {
+                _id: { $in: foundUserPlaylist.saved }
+            }
+        },
+        {
+            $project: {
+                id: '$_id',
+                title: 1,
+                image: '$thumbnail',
+                profileImg: '$tutorAvatar',
+                tutorId: '$tutor',
+            }
+        }
+    ]);
+
+    // Check if savedCourses is empty
+    if (savedCourses.length === 0) {
+        res.status(404);
+        throw new Error('No saved courses found');
+    }
+
+    res.status(200).json(savedCourses);
+})
+
 module.exports = {
     getCourses,
     getTotalCourses,
@@ -294,5 +409,7 @@ module.exports = {
     getOneCourse,
     createCourse,
     updateCourse,
-    deleteCourse
+    deleteCourse,
+    saveCourse,
+    getSavedCourses,
 }

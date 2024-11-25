@@ -25,25 +25,19 @@ const getTotalStudents = asyncHandler(async (req, res) => {
 })
 
 // @desc   Get one user
-// @route  GET /users/oneUser
+// @route  GET /users/oneUser/:userId
 // @access Public
 const getOneUser = asyncHandler(async (req, res) => {
-    const { email } = req.params;
+    const { userId } = req.params;
 
     // Check if email is provided
-    if (!email || email === '') {
+    if (!userId || userId === '') {
         res.status(400);
-        throw new Error('Email is required');
-    }
-
-    // Authorization
-    if (req.email !== email) {
-        res.status(401);
-        throw new Error('Unauthorized');
+        throw new Error('User Id is required');
     }
 
     // Check if user exists
-    const user = await User.findOne({ email }).select('-password').collation({ locale: 'en', strength: 2 }).exec();
+    const user = await User.findById(userId).select('-password -likes -saved -comments').collation({ locale: 'en', strength: 2 }).exec();
     if (!user) {
         res.status(404);
         throw new Error('User not found');
@@ -110,10 +104,10 @@ const getEmailVerificationStatus = asyncHandler(async (req, res) => {
 // @route  PUT /users/update
 // @access Private
 const updateUser = asyncHandler(async (req, res) => {
-    const { email, likes, comments, saved, premium } = req.body;
+    const { userId, email, likes, comments, saved, premium } = req.body;
 
     // Check if email is provided
-    if (!email) {
+    if (!userId) {
         res.status(400);
         throw new Error('Email is required');
     }

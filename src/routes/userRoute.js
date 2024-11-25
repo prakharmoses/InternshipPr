@@ -8,7 +8,7 @@ const verifyJWT = require('../middlewares/verifyJWT')
 const userController = require('../controllers/userController')
 
 // Defining Routes
-router.get('/oneUser/:email', verifyJWT, userController.getOneUser)
+router.get('/oneUser/:userId', verifyJWT, userController.getOneUser)
 router.get('/totalStudents', userController.getTotalStudents)
 router.get('/get-email-verification-status/:email', verifyJWT, userController.getEmailVerificationStatus)
 router.get('/', verifyJWT, userController.getUsers)
