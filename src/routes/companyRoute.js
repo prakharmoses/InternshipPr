@@ -9,7 +9,7 @@ const companyController = require('../controllers/companyController')
 
 // Defining Routes
 router.get('/getOneCompany/:companyId', companyController.getOneCompany)
-router.get('/totalPlaced', companyController.totalPlaced)
+router.get('/totalPlaced/:companyId', companyController.totalPlaced)
 router.get('/getFeedback/:companyId', companyController.getFeedback)
 router.post('/addFeedback', verifyJWT, companyController.addFeedback)
 router.get('/', verifyJWT, companyController.getCompanies)

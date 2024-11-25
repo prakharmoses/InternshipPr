@@ -167,7 +167,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
     // Check if email is unique or not
     const foundUser = await User.findOne({ email }).collation({ locale: 'en', strength: 2 }).exec();
-    if (foundUser && foundUser._id !== req.userId) {
+    if (foundUser && foundUser._id.toString() !== req.userId) {
         res.status(409);
         throw new Error('Email already taken');
     }

@@ -93,7 +93,10 @@ const contentSchema = new mongoose.Schema(
             ref: 'User',
             default: [],
         }],
-        comments: [commentScema]
+        comments: [{
+            type: commentScema,
+            default: [],
+        }]
     },
     {
         timestamps: true,

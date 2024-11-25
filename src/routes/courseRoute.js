@@ -8,7 +8,7 @@ const verifyJWT = require('../middlewares/verifyJWT')
 const courseController = require('../controllers/courseController')
 
 // Defining Routes
-router.get('/', courseController.getCourses)
+router.get('/:number', courseController.getCourses)
 router.get('/totalCourses', courseController.getTotalCourses)
 router.get('/topCourses/:number', courseController.getTopCourses)
 router.get('/:courseId', verifyJWT, courseController.getOneCourse)

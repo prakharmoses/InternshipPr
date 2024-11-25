@@ -23,8 +23,10 @@ const getCompanies = asyncHandler(async (req, res) => {
 // @route  GET /companies/totalPlaced
 // @access Public
 const totalPlaced = asyncHandler(async (req, res) => {
-    const totalPlacedStudents = await Company.findById('671ccb037cc0a11faa6c1d32').select('totalPlaced').exec();
-    const totalPlaced = totalPlacedStudents.totalPlaced.length > 0 ? totalPlacedStudents.totalPlaced[0] : 0;
+    const { companyId } = req.params;
+
+    const totalPlacedStudents = await Company.findById(companyId).select('totalPlaced').exec();
+    const totalPlaced = totalPlacedStudents && Array.isArray(totalPlacedStudents.totalPlaced) && totalPlacedStudents.totalPlaced.length > 0 ? totalPlacedStudents.totalPlaced[0] : 0;
 
     res.status(200).json({ totalPlaced });
 })

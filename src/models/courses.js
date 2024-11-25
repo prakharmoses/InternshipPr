@@ -17,17 +17,13 @@ const courseSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            enum: ['Development', 'Business', 'Finance', 'IT & Software', 'Office Productivity', 'Personal Development', 'Design', 'Marketing', 'Lifestyle', 'Photography', 'Health & Fitness', 'Music'],
+            enum: ['Development', 'Business', 'Management', 'Finance', 'IT & Software', 'Office Productivity', 'Personal Development', 'Design', 'Marketing', 'Lifestyle', 'Photography', 'Health & Fitness', 'Music'],
             required: [true, 'Category is required'],
-        },
-        date: {
-            type: Date,
-            default: Date.now(),
         },
         status: {
             type: String,
             enum: ['ongoing', 'ended', 'upcoming'],
-            default: 'ongoing',
+            default: 'upcoming',
         },
         tutor: {
             type: mongoose.Schema.Types.ObjectId,

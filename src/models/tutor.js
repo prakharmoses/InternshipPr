@@ -7,7 +7,7 @@ const tutorSchema = new mongoose.Schema(
             required: [true, 'Email is required'],
             unique: true,
         },
-        id: {
+        _id: {
             type: mongoose.Schema.Types.ObjectId,
             required: [true, 'Id is required'],
             ref: 'User',

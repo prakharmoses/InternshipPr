@@ -5,16 +5,46 @@ const mongoose = require('mongoose');
 const Course = require('../models/courses');
 const Content = require('../models/content');
 const User = require('../models/user');
+const Tutor = require('../models/tutor');
+const Company = require('../models/company');
 
 // @desc   Get all courses
 // @route  GET /courses
 // @access Public
 const getCourses = asyncHandler(async (req, res) => {
-    const courses = await Course.find().exec();
+    const { number } = req.params;
+    
+    const courses = await Course.aggregate([
+        {
+            $addFields: {
+                contentCount: { $size: "$content" }
+            }
+        },
+        {
+            $sort: { createdAt: -1 }
+        },
+        {
+            $project: {
+                id: '$_id',
+                title: 1,
+                tutorName: 1,
+                tutorImg: '$tutorAvatar',
+                thumbImg: '$thumbnail',
+                contentCount: 1,
+                date: '$createdAt',
+                category: 1,
+                status: 1
+            }
+        },
+        {
+            $limit: parseInt(number)
+        }
+    ])
 
-    // Check if courses is empty
+    // Check if no courses are found
     if (courses.length === 0) {
-        res.status(404).json({ message: 'No courses found' });
+        return res.status(404)
+        throw new Error('No courses found');
     }
 
     res.status(200).json(courses);
@@ -39,18 +69,41 @@ const getTotalCourses = asyncHandler(async (req, res) => {
 // @access Public
 const getTopCourses = asyncHandler(async (req, res) => {
     // Parse `number` from the URL params and convert it to an integer
-    const number = parseInt(req.params.number, 10);
+    const number = Math.min(parseInt(req.params.number, 10), 10);
 
     // Check if number is empty
-    if (!number || !Number.isInteger(number) || isNaN(number) || number < 1 || number % 1 !== 0 || number >= 10) {
+    if (!number || !Number.isInteger(number) || isNaN(number) || number < 1 || number % 1 !== 0) {
         res.status(400);
         throw new Error('Number is required and should be an integer less than 10');
     }
 
-    const courses = await Course.find()
-        .sort({ savedBy: -1 }) // Sort in descending order by savedBy
-        .limit(number)
-        .exec();
+    // Get top courses
+    const courses = await Course.aggregate([
+        {
+            $addFields: {
+                savedByCount: { $size: "$savedBy" },
+                contentCount: { $size: "$content" }
+            }
+        },
+        {
+            $sort: { savedByCount: -1 }
+        },
+        {
+            $project: {
+                _id: 1,
+                title: 1,
+                tutor: 1,
+                tutorAvatar: 1,
+                tutorName: 1,
+                thumbnail: 1,
+                createdAt: 1,
+                contentCount: 1,
+            }
+        },
+        {
+            $limit: number
+        }
+    ])
 
     // Check if courses is empty
     if (courses.length === 0) {
@@ -83,10 +136,10 @@ const getOneCourse = asyncHandler(async (req, res) => {
 })
 
 // @desc   Create course
-// @route  POST /courses/create
+// @route  POST /courses/add
 // @access Private
 const createCourse = asyncHandler(async (req, res) => {
-    const { title, description, tutor, category, status, thumbnail } = req.body;
+    const { title, description, tutor, category, thumbnail } = req.body;
 
     // Check if all the fields are given
     if (!title || !description || !tutor || !mongoose.Types.ObjectId.isValid(tutor) || !thumbnail || !category) {
@@ -95,7 +148,8 @@ const createCourse = asyncHandler(async (req, res) => {
     }
 
     // Check if the tutor is authorized
-    const foundTutor = await User.findById(tutor).exec();
+    const foundTutor = await Tutor.findById(tutor).exec();
+    const foundUser = await User.findById(tutor).exec();
     if (!foundTutor) {
         res.status(403);
         throw new Error('You are not authorized to create a course');
@@ -108,18 +162,34 @@ const createCourse = asyncHandler(async (req, res) => {
         throw new Error('Course already exists');
     }
 
+    // Update course category in company
+    const foundCompany = await Company.findById(`${process.env.COMPANY_ID}`).exec();
+    if (!foundCompany.category) {
+        foundCompany.category = [];
+    }
+    if (!foundCompany.category.includes(category)) {
+        foundCompany.category.push(category);
+    }
+    await foundCompany.save();
+
     // Create new course
     const newCourse = new Course({
         title,
         description,
         tutor,
         category,
-        status: status ? status : 'ongoing',
         thumbnail,
-        tutorName: foundTutor.name,
-        tutorAvatar: foundTutor.avatar
+        tutorName: foundUser.name,
+        tutorAvatar: foundUser.avatar
     });
     await newCourse.save();
+
+    // Add course to tutor's courses
+    if (!foundTutor.courses) {
+        foundTutor.courses = [];
+    }
+    foundTutor.courses.push(newCourse._id);
+    await foundTutor.save();
 
     res.status(201).json(newCourse);
 })
