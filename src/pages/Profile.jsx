@@ -15,6 +15,19 @@ import { useAccount } from '../hooks/useAuth.js';
 import Modal from '../components/Modal';
 import CourseCard from '../components/CourseCard';
 import MyCourses from '../components/MyCourses';
+import PlaylistSection from '../components/PlaylistSection';
+import LikesSection from '../components/LikesSection';
+import CommentSection from '../components/CommentSection';
+
+const dummyUser = {
+  name: "account.name",
+  email: "account.email",
+  role: ["student"],
+  sex: 'M',
+  avatar: "account.avatar",
+  cover: "account.cover",
+  about: 'I am an Angirasoft member. I am exploring the world of technology and learning new things every day.',
+}
 
 export default function Profile() {
   const { sidebarActive } = useSidebar();
@@ -25,51 +38,7 @@ export default function Profile() {
   // Defining States
   const [tab, setTab] = useState('about');
   const [edit, setEdit] = useState(false);
-  const [user, setUser] = useState({
-    name: account.name,
-    email: account.email,
-    role: account.roles.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(', '),
-    sex: 'M',
-    avatar: account.avatar,
-    cover: account.cover,
-    about: 'I am an Angirasoft member. I am exploring the world of technology and learning new things every day.',
-    likes: [
-      { id: 1, title: 'JavaScript', image: 'https://img.icons8.com/color/452/javascript.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 1 },
-      { id: 2, title: 'React', image: 'https://img.icons8.com/color/452/react-native.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 2 },
-      { id: 3, title: 'Node.js', image: 'https://img.icons8.com/color/452/nodejs.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 3 },
-      { id: 4, title: 'Express', image: 'https://img.icons8.com/color/452/express.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 4 },
-      { id: 5, title: 'MongoDB', image: 'https://img.icons8.com/color/452/mongodb.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 5 },
-      { id: 6, title: 'Python', image: 'https://img.icons8.com/color/452/python.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 6 },
-      { id: 7, title: 'Django', image: 'https://img.icons8.com/color/452/django.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 7 },
-      { id: 8, title: 'Flask', image: 'https://img.icons8.com/color/452/flask.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 8 },
-      { id: 9, title: 'PostgreSQL', image: 'https://img.icons8.com/color/452/postgreesql.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 9 },
-      { id: 10, title: 'SQLite', image: 'https://img.icons8.com/color/452/sql.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 10 },
-    ],
-    comments: [
-      { id: 1, title: 'Great work!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 1 },
-      { id: 2, title: 'Keep it up!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 2 },
-      { id: 3, title: 'Nice job!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 3 },
-      { id: 4, title: 'Awesome!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 4 },
-      { id: 5, title: 'Fantastic!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 5 },
-      { id: 6, title: 'Good job!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 6 },
-      { id: 7, title: 'Well done!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 7 },
-      { id: 8, title: 'Excellent!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 8 },
-      { id: 9, title: 'Brilliant!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 9 },
-      { id: 10, title: 'Superb!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 10 },
-    ],
-    playlists: [
-      { id: 1, title: 'JavaScript', image: 'https://img.icons8.com/color/452/javascript.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 2, title: 'React', image: 'https://img.icons8.com/color/452/react-native.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 3, title: 'Node.js', image: 'https://img.icons8.com/color/452/nodejs.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 4, title: 'Express', image: 'https://img.icons8.com/color/452/express.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 5, title: 'MongoDB', image: 'https://img.icons8.com/color/452/mongodb.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 6, title: 'Python', image: 'https://img.icons8.com/color/452/python.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 7, title: 'Django', image: 'https://img.icons8.com/color/452/django.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 8, title: 'Flask', image: 'https://img.icons8.com/color/452/flask.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 9, title: 'PostgreSQL', image: 'https://img.icons8.com/color/452/postgreesql.png', profileImg: 'https://img.icons8.com/color/452/like' },
-      { id: 10, title: 'SQLite', image: 'https://img.icons8.com/color/452/sql.png', profileImg: 'https://img.icons8.com/color/452/like' },
-    ],
-  });
+  const [user, setUser] = useState(dummyUser);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
   const [sentEmail, setSentEmail] = useState(false);
   const [newDetail, setNewDetail] = useState({
@@ -91,16 +60,6 @@ export default function Profile() {
   };
 
   // Define functions
-  const handleRemovePlaylist = (id) => {
-    const updatedPlaylists = [...user.playlists];
-    updatedPlaylists.splice(id, 1);
-    // Update your user state here accordingly
-    setUser({
-      ...user,
-      playlists: updatedPlaylists
-    });
-  }
-
   const handleVerifyEmail = async () => {
     try {
       const response = await callBackendApi(`/auth/send-verification-email/${account.email}`, 'GET', null);
@@ -199,8 +158,9 @@ export default function Profile() {
     // Fetch user data
     const fetchUserData = async () => {
       try {
-        const response = await callBackendApi(`/users/oneUser/${account.email}`, 'GET', null);
+        const response = await callBackendApi(`/users/oneUser/${profileId}`, 'GET', null);
         const data = await response.json();
+        console.log("The data recieved is: ", data);
 
         if (response.status === 200) {
           setUser(() => ({
@@ -211,9 +171,6 @@ export default function Profile() {
             avatar: data.avatar,
             cover: data.cover,
             about: data.about,
-            likes: data.likes,
-            comments: data.comments,
-            playlists: data.saved,
           }));
           setNewDetail(() => ({
             name: data.name,
@@ -277,12 +234,13 @@ export default function Profile() {
               <button onClick={() => setTab('playlist')} className={`rounded-full py-3 px-6 ${tab !== 'playlist' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Saved Playlists</button>
               {profileId === account.id && account.roles.includes('tutor') && <button onClick={() => setTab('mycourses')} className={`rounded-full py-3 px-6 ${tab !== 'mycourses' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>My Courses</button>}
             </div>
-            <button
+            {profileId === account.id && <button
               onClick={() => setEdit(true)}
+              disabled={profileId !== account.id}
               className='relative top-[-4rem] right-[1rem] z-20 cursor-pointer border-2 border-solid border-gray-300 dark:border-gray-700 rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-500 shadow-[0_0_15px_1px_rgb(0,0,0)] dark:shadow-[0_0_15px_1px_rgb(255,255,255)]'
             >
               <CiEdit className="text-3xl text-gray-500 dark:text-gray-400" />
-            </button>
+            </button>}
           </div>
         </div>
 
@@ -294,91 +252,9 @@ export default function Profile() {
             </div>
           </div>
         )}
-        {profileId === account.id && tab === 'likes' && (
-          <div className="grid grid-cols-12 gap-2 gap-y-6 max-w-6xl my-16 mx-10">
-            {user.likes.length > 0 ? user.likes.map((video) => (
-              <div ket={video.id} className="col-span-12 sm:col-span-6 md:col-span-3">
-                <card className="w-full flex flex-col">
-                  <div className="relative">
-                    <Link href={`/content/${video.id}`}>
-                      <img src="https://picsum.photos/seed/59/300/200" className="w-96 h-auto" />
-                    </Link>
-                    <p className="absolute right-2 bottom-2 bg-gray-900 text-gray-100 text-xs px-1 py">&lt; 1:00:00</p>
-                  </div>
-
-                  <div className="flex flex-row mt-2 gap-2 items-center">
-                    <Link href={`/profile/${video.profileId}`}>
-                      <img src="https://picsum.photos/seed/1/40/40" className="rounded-full max-h-10 max-w-10" />
-                    </Link>
-
-                    <Link href={`/content/${video.id}`} className="flex items-center justify center">
-                      <p className="text-gray-900 dark:text-gray-100 text-sm font-semibold">{video.title}</p>
-                    </Link>
-                  </div>
-                </card>
-              </div>
-            )) : <div className="col-span-12 text-center text-gray-500 dark:text-gray-400">No liked videos found.</div>}
-          </div>
-        )}
-        {profileId === account.id && tab === 'comment' && (
-          <div className="grid grid-cols-12 gap-2 gap-y-6 max-w-6xl my-16 mx-10">
-            {user.comments.length > 0 ? user.comments.map((video) => (
-              <div ket={video.id} className="col-span-12 sm:col-span-6 md:col-span-3">
-                <card className="w-full flex flex-col">
-                  <div className="relative">
-                    <Link href={`/content/${video.id}`}>
-                      <img src="https://picsum.photos/seed/59/300/200" className="w-96 h-auto" />
-                    </Link>
-                    <p className="absolute right-2 bottom-2 bg-gray-900 text-gray-100 text-xs px-1 py">&lt; 1:00:00</p>
-                  </div>
-
-                  <div className="flex flex-row mt-2 gap-2 items-center">
-                    {/* <!-- Profile Picture --> */}
-                    <Link href={`/profile/${video.profileId}`}>
-                      <img src="https://picsum.photos/seed/1/40/40" className="rounded-full max-h-10 max-w-10" />
-                    </Link>
-
-                    <Link href={`/content/${video.id}`} className="flex items-center justify center">
-                      <p className="text-gray-900 dark:text-gray-100 text-sm font-semibold">{video.title}</p>
-                    </Link>
-                  </div>
-                </card>
-              </div>
-            )) : <div className="col-span-12 text-center text-gray-500 dark:text-gray-400">No comments found.</div>}
-          </div>
-        )}
-        {profileId === account.id && tab === 'playlist' && (
-          <div className={`grid ${sidebarActive ? 'grid-cols-3 gap-2' : 'grid-cols-4 gap-[12rem]'} gap-y-6 max-w-6xl my-16 mx-10`}>
-            {user.playlists.length > 0 ? user.playlists.map((playlist) => (
-              <div key={playlist.id} className="relative max-w-sm w-[20rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                {/* Cancel/Delete Icon */}
-                <button
-                  onClick={() => handleRemovePlaylist(playlist.id)}
-                  className="absolute top-2 right-2 p-1 rounded-full opacity-70 bg-gray-200 dark:bg-gray-700 hover:bg-red-500 hover:dark:bg-red-500 transition-all duration-300"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5 text-gray-600 dark:text-white">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-
-                {/* Playlist Image */}
-                <Link href="#">
-                  <img className="rounded-t-lg w-full" src="https://picsum.photos/seed/59/300/200" alt="" />
-                </Link>
-
-                {/* Playlist Details */}
-                <div className="p-5 flex flex-row gap-4">
-                  <Link>
-                    <img src="https://picsum.photos/seed/1/40/40" alt="" className="rounded-full max-h-10 max-w-10" />
-                  </Link>
-                  <Link href="#">
-                    <h5 className="mb-2 text-md font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
-                  </Link>
-                </div>
-              </div>
-            )) : <div className="col-span-12 text-center text-gray-500 dark:text-gray-400">No saved playlists found.</div>}
-          </div>
-        )}
+        {profileId === account.id && tab === 'likes' && <LikesSection userId={account.id} />}
+        {profileId === account.id && tab === 'comment' && <CommentSection comments={account.id} />}
+        {tab === 'playlist' && <PlaylistSection userId={account.id} profileId={profileId} />}
         {profileId === account.id && tab === 'mycourses' && account.roles.includes('tutor') && <MyCourses />}
       </section>
 
