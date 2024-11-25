@@ -51,10 +51,19 @@ const categoryIcons = {
     'Machine Learning': <SiScikitlearn className='mr-2 text-black dark:text-white' />,
 }
 
+const dummyCourses = [
+  { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic2, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb1, videoCount: 10, title: 'Complete HTML Tutorial' },
+  { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic3, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb2, videoCount: 10, title: 'Complete CSS Tutorial' },
+  { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic4, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb3, videoCount: 10, title: 'Complete JS Tutorial' },
+  { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic5, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb4, videoCount: 10, title: 'Complete Bootstrap Tutorial' },
+  { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic6, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb5, videoCount: 10, title: 'Complete jQuery Tutorial' },
+  { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, videoCount: 10, title: 'Complete SASS Tutorial' },
+]
+
 export default function Home() {
     const navigate = useNavigate();
     const { isDarkMode, setIsDarkMode, toggleDarkMode } = useDarkMode();
-    const { account, callBackendApi } = useAccount();
+    const { account, callBackendApi, updateRole } = useAccount();
     const { sidebarActive } = useSidebar();
 
     // Initialising state
@@ -62,20 +71,12 @@ export default function Home() {
       'Development', 'Business', 'Design', 'Marketing', 'Software', 'Science', 'JTML', 'CSS', 'JavaScript', 'React', 'PHP',
       'Bootstrap', 'Machine Learning'
     ]);
-    const [courses, setCourses] = useState([
-      { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic2, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb1, videoCount: 10, title: 'Complete HTML Tutorial' },
-      { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic3, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb2, videoCount: 10, title: 'Complete CSS Tutorial' },
-      { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic4, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb3, videoCount: 10, title: 'Complete JS Tutorial' },
-      { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic5, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb4, videoCount: 10, title: 'Complete Bootstrap Tutorial' },
-      { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic6, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb5, videoCount: 10, title: 'Complete jQuery Tutorial' },
-      { courseId: 'bdojgdoj', tutorId: 'sgjmigus', tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, videoCount: 10, title: 'Complete SASS Tutorial' },
-    ])
+    const [courses, setCourses] = useState(dummyCourses);
     const [accountInsights, setAccountInsights] = useState({
         likes: 0,
         comments: 0,
         playlist: 0
-    })
-    const [sentEmail, setSentEmail] = useState(false);
+    });
 
     // Function to handle the become tutor button
     const handleBecomeTutor = async () => {
@@ -85,12 +86,16 @@ export default function Home() {
 
         // Add the user in the tutors list
         try {
-              const response = callBackendApi(`/tutors/add`, 'POST', null);
+              const response = await callBackendApi(`/tutors/add`, 'POST', null);
               if (response.status === 409 || response.status === 201) {
-                navigate(`/profile/${account.id}?tab=myCourses`);
+                  if (response.status === 201) {
+                      const data = await response.json();
+                      updateRole({ accessTokenNew: data.accessToken, rolesNew: data.roles });
+                  }
+                  navigate(`/profile/${account.id}?tab=mycourses`);
               } else if (response.status === 417) {
                   const data = await response.json();
-                  setSentEmail(true);
+                  console.log("The data recieved in creating tutor is: ", data);
                   alert(data.message);
               } else {
                   const data = await response.json();
@@ -108,7 +113,17 @@ export default function Home() {
               const data = await response.json();
 
               if (response.status === 200) {
-                  setCourses(data.courses);
+                  const formattedCourses = data.map(course => ({
+                      courseId: course._id,
+                      tutorId: course.tutor,
+                      tutorImg: course.tutorAvatar,
+                      tutorName: course.tutorName,
+                      date: new Date(course.createdAt),
+                      thumbImg: course.thumbnail,
+                      videoCount: course.contentCount,
+                      title: course.title
+                  }));
+                  setCourses(formattedCourses);
               } else if (response.status === 404) {
                   setCourses([]);
               } else {
@@ -145,7 +160,7 @@ export default function Home() {
               const data = await response.json();
 
               if (response.status === 200) {
-                  setCategories(data.categories);
+                  setCategories(data);
               } else {
                   throw new Error(data.message);
               }
@@ -280,14 +295,13 @@ export default function Home() {
                   className="inline-block px-4 py-2 bg-blue-500 text-white rounded"
               >Get Started</button>
             </div>}
-            {sentEmail && <div className="bg-white dark:bg-black text-green-600 dark:text-green-400 rounded-lg p-6 shadow-[0_0_20px_3px_#d48aff] dark:shadow-[0_0_20px_3px_#a91efa]">Email sent successfully!</div>}
           </div>
         </section>
 
         <section className="py-20">
           <h1 className="text-4xl font-bold text-center mb-8 text-slate-600 dark:text-slate-400">Our Top Courses</h1>
           <div className={`grid grid-cols-1 gap-6 px-4 ${!sidebarActive ? 'sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3'}`}>
-            {courses.map((course, idx) => (
+            {Array.isArray(courses) && courses.length > 0 && courses.map((course, idx) => (
               <CourseCard
                 key={idx}
                 tutorImage={course.tutorImg}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaBars, FaSearch, FaUser, FaSun, FaMoon } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 // Importing Context
 import { useDarkMode } from '../context/DarkModeContext';
@@ -20,6 +20,7 @@ export default function Navbar() {
     // Defining states
     const [profileActive, setProfileActive] = useState(false);
     const [searchActive, setSearchActive] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // Defining refs
     const profileRef = useRef(null);
@@ -42,6 +43,18 @@ export default function Navbar() {
     const toggleProfile = () => setProfileActive(!profileActive);
     // const toggleSearch = () => setSearchActive(!searchActive);
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const searchInput = searchRef.current.querySelector('input[name="search_box"]');
+        let searchQuery = '';
+
+        if (searchInput) {
+            searchQuery = searchInput.value.trim();
+        }
+        searchParams.set('search', searchQuery);
+        setSearchParams(searchParams);
+    }
+
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 h-20 border-b dark:bg-gray-900 dark:border-gray-700 bg-white border-gray-200 transition-transform duration-300 ease-in-out ${sidebarActive ? 'ml-72' : 'ml-0'}`}>
             <section className="flex items-center justify-between p-6 h-20 max-w-screen-xl mx-auto text-black dark:text-white">
@@ -50,11 +63,11 @@ export default function Navbar() {
                 <form
                     className="flex items-center gap-4 w-1/2 rounded-lg p-4 h-12 dark:bg-gray-700 bg-gray-100"
                     ref={searchRef}
+                    onSubmit={handleSearch}
                 >
                     <input
                         type="text"
                         name="search_box"
-                        required
                         placeholder="Search courses..."
                         maxLength="100"
                         className="w-full text-lg bg-transparent focus:outline-none active:clip-path-full-square focus:clip-path-full-square dark:text-white text-black"

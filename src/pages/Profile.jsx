@@ -201,7 +201,6 @@ export default function Profile() {
       try {
         const response = await callBackendApi(`/users/oneUser/${account.email}`, 'GET', null);
         const data = await response.json();
-        console.log("The data recieved is: ", data);
 
         if (response.status === 200) {
           setUser(() => ({
@@ -276,7 +275,7 @@ export default function Profile() {
               {profileId === account.id && <button onClick={() => setTab('likes')} className={`rounded-full py-3 px-6 ${tab !== 'likes' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Likes</button>}
               {profileId === account.id && <button onClick={() => setTab('comment')} className={`rounded-full py-3 px-6 ${tab !== 'comment' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Comments</button>}
               <button onClick={() => setTab('playlist')} className={`rounded-full py-3 px-6 ${tab !== 'playlist' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>Saved Playlists</button>
-              {profileId === account.id && <button onClick={() => setTab('mycourses')} className={`rounded-full py-3 px-6 ${tab !== 'mycourses' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>My Courses</button>}
+              {profileId === account.id && account.roles.includes('tutor') && <button onClick={() => setTab('mycourses')} className={`rounded-full py-3 px-6 ${tab !== 'mycourses' ? 'bg-stone-100 dark:bg-stone-900' : 'bg-stone-300 dark:bg-stone-700'} text-gray-700 dark:text-gray-300 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900 dark:hover:bg-stone-800 dark:hover:text-gray-100`}>My Courses</button>}
             </div>
             <button
               onClick={() => setEdit(true)}
@@ -380,7 +379,7 @@ export default function Profile() {
             )) : <div className="col-span-12 text-center text-gray-500 dark:text-gray-400">No saved playlists found.</div>}
           </div>
         )}
-        {profileId === account.id && tab === 'mycourses' && <MyCourses />}
+        {profileId === account.id && tab === 'mycourses' && account.roles.includes('tutor') && <MyCourses />}
       </section>
 
       {edit && (

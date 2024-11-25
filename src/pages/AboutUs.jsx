@@ -260,7 +260,7 @@ export default function AboutUs() {
     useEffect(() => {
         const fetchPlacements = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/company/totalPlaced`);
+                const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/company/totalPlaced/${process.env.REACT_APP_COMPANY_ID}`);
                 const data = await response.json();
 
                 if (response.status !== 200) {

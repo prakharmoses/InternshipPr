@@ -1,19 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const CourseCard = ({ tutorImage, tutorName, date, thumbImage, videoCount, title, link }) => (
+const CourseCard = ({ tutorImage, tutorName, date, thumbImage, contentCount, title, link }) => (
     <div className="bg-white dark:bg-black rounded-lg p-8">
         <div className="flex items-center gap-6 mb-10">
             <img src={tutorImage} alt="" className="h-16 w-16 rounded-full object-cover" />
             <div>
                 <h3 className="text-2xl text-black dark:text-white mb-1">{tutorName}</h3>
-                <span className="text-lg text-gray-600 dark:text-gray-400">{date}</span>
+                <span className="text-lg text-gray-600 dark:text-gray-400">{date && date instanceof Date ? date.toDateString() : date.toString()}</span>
             </div>
         </div>
         <div className="relative">
             <img src={thumbImage} alt="" className="w-full h-50 object-cover rounded-lg" />
-            {videoCount !== '' && <span className="absolute top-4 left-4 bg-black bg-opacity-30 text-white px-6 py-2 rounded-lg text-xl">
-                {videoCount} videos
+            {contentCount !== '' && <span className="absolute top-4 left-4 bg-black bg-opacity-30 text-white px-6 py-2 rounded-lg text-xl">
+                {contentCount} content
             </span>}
         </div>
         <h3 className="text-3xl text-black dark:text-white pt-4 pb-2">{title}</h3>

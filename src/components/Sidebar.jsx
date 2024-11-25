@@ -51,7 +51,7 @@ export default function Sidebar() {
             </button> */}
             <div className="p-4">
                 <div className="text-center mb-8">
-                    {account.name ? (<>
+                    {account.name && account.roles && Array.isArray(account.roles) ? (<>
                         <img src={account.avatar} className="h-24 w-24 rounded-full mx-auto" alt="Profile" />
                         <h3 className="text-xl text-gray-900 dark:text-gray-100 mt-2">{account.name}</h3>
                         <p className="text-gray-600 dark:text-gray-400">{account.roles.indexOf('admin') !== -1 ? 'Admin' : account.roles.indexOf('tutor') !== -1 ? 'Tutor' : 'Student'}</p>
@@ -92,21 +92,25 @@ export default function Sidebar() {
                         <span className='transition-transform duration-300 group-hover:translate-x-4'>Contact Us</span>
                     </Link>
 
-                    <h2 className='p-2 text-gray-600 dark:text-gray-400'>Tutors</h2>
-                    <Link to={`/profile/${account.id}?tab=mycourses`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <RiMiniProgramLine className="mr-4 text-xl" />
-                        <span className='transition-transform duration-300 group-hover:translate-x-4'>My Courses</span>
-                    </Link>
+                    {account.roles && Array.isArray(account.roles) && (account.roles.includes('tutor') || account.roles.includes('admin')) && (<>
+                        <h2 className='p-2 text-gray-600 dark:text-gray-400'>Tutors</h2>
+                        <Link to={`/profile/${account.id}?tab=mycourses`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <RiMiniProgramLine className="mr-4 text-xl" />
+                            <span className='transition-transform duration-300 group-hover:translate-x-4'>My Courses</span>
+                        </Link>
+                    </>)}
 
-                    <h2 className='p-2 text-gray-600 dark:text-gray-400'>Admin</h2>
-                    <Link to={`/admin`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <RiDashboardFill className="mr-4 text-xl" />
-                        <span className='transition-transform duration-300 group-hover:translate-x-4'>Dashboard</span>
-                    </Link>
-                    <Link to={`/tutorControlls`} className="flex items-center p-4 mt-[-0.5rem] transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <MdOutlineManageAccounts className="mr-4 text-xl" />
-                        <span className='transition-transform duration-300 group-hover:translate-x-4'>Tutor Controls</span>
-                    </Link>
+                    {account.roles && Array.isArray(account.roles) && account.roles.includes('admin') && (<>
+                        <h2 className='p-2 text-gray-600 dark:text-gray-400'>Admin</h2>
+                        <Link to={`/admin`} className="flex items-center p-4 transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <RiDashboardFill className="mr-4 text-xl" />
+                            <span className='transition-transform duration-300 group-hover:translate-x-4'>Dashboard</span>
+                        </Link>
+                        <Link to={`/tutorControlls`} className="flex items-center p-4 mt-[-0.5rem] transition-colors duration-300 group text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <MdOutlineManageAccounts className="mr-4 text-xl" />
+                            <span className='transition-transform duration-300 group-hover:translate-x-4'>Tutor Controls</span>
+                        </Link>
+                    </>)}
                 </nav>
             </div>
         </div>

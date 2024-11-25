@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 // Import context
 import { useSidebar } from '../context/SidebarContext';
+
+// Import hooks
+import { useAccount } from "../hooks/useAuth";
 
 // Import components
 import Modal from "./Modal";
@@ -14,13 +17,15 @@ import { FaChevronDown, FaFilter } from "react-icons/fa6";
 const filters = [
     {
         id: 'category', name: 'Category', options: [
-            { id: 'development', name: 'Development' },
-            { id: 'business', name: 'Business' },
-            { id: 'management', name: 'Management' },
+            { id: "", name: "All" },
+            { id: 'Development', name: 'Development' },
+            { id: 'Business', name: 'Business' },
+            { id: 'Management', name: 'Management' },
         ]
     },
     {
         id: 'status', name: 'Status', options: [
+            { id: "", name: "All" },
             { id: 'ongoing', name: 'Ongoing' },
             { id: 'upcoming', name: 'Upcoming' },
             { id: 'ended', name: 'Ended' },
@@ -30,50 +35,54 @@ const filters = [
 
 const categoryArray = ['Development', 'Business', 'Management'];
 
+const dummyCourses = [
+    {
+        id: 1,
+        title: 'Introduction to HTML',
+        description: 'Learn the basics of HTML and how to create a website from scratch using HTML only without any CSS or JavaScript involved in the process. This course is designed for beginners who are new to web development and want to learn how to create a website using HTML.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNtOzypPNyw780jU3LqCysnHJ8CPgakjir1w&s',
+        category: 'Web Development',
+        contentCount: 10,
+        status: 'In Progress',
+        startDate: new Date()
+    },
+    {
+        id: 2,
+        title: 'Introduction to CSS',
+        description: 'Learn the basics of HTML and how to create a website from scratch using HTML only without any CSS or JavaScript involved in the process. This course is designed for beginners who are new to web development and want to learn how to create a website using HTML.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvv2__tSddXBQp-SYjwpKwotlCkXK-INY_lg&s',
+        category: 'Web Development',
+        contentCount: 10,
+        status: 'In Progress',
+        startDate: new Date()
+    },
+    {
+        id: 3,
+        title: 'Introduction to JavaScript',
+        description: 'Learn the basics of HTML and how to create a website from scratch using HTML only without any CSS or JavaScript involved in the process. This course is designed for beginners who are new to web development and want to learn how to create a website using HTML.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRYoG5o0nQDx8Fz2UV7obIJWhFODDr631DnQ&s',
+        category: 'Web Development',
+        contentCount: 10,
+        status: 'In Progress',
+        startDate: new Date()
+    }
+];
+
 const MyCourses = () => {
     const { sidebarActive } = useSidebar();
+    const { account, callBackendApi } = useAccount();
+    const [searchParams] = useSearchParams();
 
     // Define states
-    const [courses, setCourses] = useState([
-        {
-            id: 1,
-            title: 'Introduction to HTML',
-            description: 'Learn the basics of HTML and how to create a website from scratch using HTML only without any CSS or JavaScript involved in the process. This course is designed for beginners who are new to web development and want to learn how to create a website using HTML.',
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNtOzypPNyw780jU3LqCysnHJ8CPgakjir1w&s',
-            category: 'Web Development',
-            contentCount: 10,
-            status: 'In Progress',
-            startDate: new Date()
-        },
-        {
-            id: 2,
-            title: 'Introduction to CSS',
-            description: 'Learn the basics of HTML and how to create a website from scratch using HTML only without any CSS or JavaScript involved in the process. This course is designed for beginners who are new to web development and want to learn how to create a website using HTML.',
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvv2__tSddXBQp-SYjwpKwotlCkXK-INY_lg&s',
-            category: 'Web Development',
-            contentCount: 10,
-            status: 'In Progress',
-            startDate: new Date()
-        },
-        {
-            id: 3,
-            title: 'Introduction to JavaScript',
-            description: 'Learn the basics of HTML and how to create a website from scratch using HTML only without any CSS or JavaScript involved in the process. This course is designed for beginners who are new to web development and want to learn how to create a website using HTML.',
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRYoG5o0nQDx8Fz2UV7obIJWhFODDr631DnQ&s',
-            category: 'Web Development',
-            contentCount: 10,
-            status: 'In Progress',
-            startDate: new Date()
-        }
-    ]);
+    const [courses, setCourses] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({
-        category: '',
-        status: '',
+        'category': '',
+        'status': '',
     });
-    const [sortType, setSortType] = useState('asc');
-    const [filteredCourses, setFilteredCourses] = useState([]);
-    const [sortedCourses, setSortedCourses] = useState([]);
-    const [searchedCourses, setSearchedCourses] = useState('');
+    const [sortType, setSortType] = useState('');
+    const [filteredCourses, setFilteredCourses] = useState(courses);
+    const [sortedCourses, setSortedCourses] = useState(filteredCourses);
+    const [searchedCourses, setSearchedCourses] = useState(sortedCourses);
     const [newCourseModalOpen, setNewCourseModalOpen] = useState(false);
 
     // New course states
@@ -83,26 +92,51 @@ const MyCourses = () => {
     const [thumbnail, setThumbnail] = useState('');
 
     // Define functions
-    const handleCreateCourse = (e) => {
+    const handleCreateCourse = async (e) => {
         e.preventDefault();
 
-        const newCourse = {
-            id: courses.length + 1,
-            title,
-            description,
-            category,
-            image: thumbnail,
-            contentCount: 0,
-            status: 'Upcoming',
-            startDate: new Date()
+        try {
+            const newCourseData = {
+                title,
+                description,
+                category,
+                thumbnail,
+                tutor: account.id
+            }
+            const response = await callBackendApi('/courses/add', 'POST', newCourseData);
+            if (response.status === 201) {
+                const data = await response.json();
+                setCourses([
+                    ...courses,
+                    {
+                        id: data.id,
+                        title: data.title,
+                        description: data.description,
+                        image: data.thumbnail,
+                        category: data.category,
+                        contentCount: 0,
+                        status: data.status,
+                        startDate: new Date(data.createdAt),
+                    }
+                ]);
+            } else {
+                const data = await response.json();
+                throw new Error('Create course error:', data.message);
+            }
+        } catch (error) {
+            console.error('Create course error:', error);
+        } finally {
+            setTitle('');
+            setDescription('');
+            setCategory('');
+            setThumbnail('');
+            setNewCourseModalOpen(false);
         }
-
-        setCourses([...courses, newCourse]);
-        setNewCourseModalOpen(false);
     }
 
     const handleChangeThumbnail = (e) => {
         const file = e.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
 
         reader.onloadend = () => {
@@ -112,6 +146,88 @@ const MyCourses = () => {
         reader.readAsDataURL(file);
     }
 
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await callBackendApi(`/tutors/getCourses/${account.id}`, 'GET', null);
+
+                if (response.status === 206) {
+                    setCourses([]);
+                    setFilteredCourses([]);
+                    setSearchedCourses([]);
+                } else if (response.status === 200) {
+                    const data = await response.json();
+                    const formattedCourses = data.map(course => ({
+                        id: course.id,
+                        title: course.title,
+                        description: course.description,
+                        image: course.image,
+                        category: course.category,
+                        contentCount: course.contentCount,
+                        status: course.status,
+                        startDate: new Date(course.createdAt),
+                    }));
+                    setCourses(formattedCourses);
+                } else {
+                    const data = await response.json();
+                    throw new Error('Fetch courses error:', data.message);
+                }
+            } catch (error) {
+                console.error('Fetch courses error:', error);
+            }
+        }
+
+        fetchCourses();
+    }, [account.id, callBackendApi]);
+
+    // Handling filter functionality
+    useEffect(() => {
+        const filtered = courses.filter(course => {
+            let isValid = true;
+
+            for (const key in selectedFilters) {
+                if (selectedFilters[key] !== '' && course[key] !== selectedFilters[key]) {
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        });
+
+        setFilteredCourses(filtered);
+    }, [courses, selectedFilters]);
+
+    // Handling sort functionality
+    useEffect(() => {
+        if (sortType === 'date') {
+            setSortedCourses([...filteredCourses].sort((a, b) => new Date(b.startDate) - new Date(a.startDate)));
+        } else if (sortType === 'alpha') {
+            setSortedCourses([...filteredCourses].sort((a, b) => a.title.localeCompare(b.title)));
+        } else if (sortType === 'dsc') {
+            if (Array.isArray(sortedCourses) && sortedCourses.length > 0) {
+                setSortedCourses([...sortedCourses].reverse());
+            } else {
+                setSortedCourses([...filteredCourses].reverse());
+            }
+        } else {
+            setSortedCourses(filteredCourses);
+        }
+    }, [sortType, filteredCourses]);
+
+    // Handling search functionality
+    useEffect(() => {
+        const searchQuery = searchParams.get('search');
+        if (searchQuery && Array.isArray(sortedCourses) && sortedCourses.length > 0) {
+            const searched = sortedCourses.filter((course) =>
+                course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                course.description.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setSearchedCourses(searched);
+        } else {
+            setSearchedCourses(sortedCourses);
+        }
+    }, [searchParams, sortedCourses]);
+
     return (
         <main className="mx-auto px-4 sm:px-8 mt-14">
             <div className="mt-20 mb-16 w-full flex flex-row items-center justify-around">
@@ -120,9 +236,13 @@ const MyCourses = () => {
                         <div key={idx} className="flex flex-col w-[12rem]">
                             <label htmlFor={filter.id} className="text-sm font-medium text-stone-600 dark:text-stone-400">{filter.name}</label>
 
-                            <select id={filter.id} className="cursor-pointer mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <select
+                                id={filter.id}
+                                className="cursor-pointer mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, [filter.id]: e.target.value })}
+                            >
                                 {filter.options.map((option, index) => (
-                                    <option key={index}>{option.name}</option>
+                                    <option key={index} value={option.id}>{option.name}</option>
                                 ))}
                             </select>
                         </div>
@@ -131,12 +251,15 @@ const MyCourses = () => {
                 <div className="flex flex-row gap-4">
                     <div className="relative w-44">
                         <FaFilter className="text-black dark:text-white absolute top-1/2 -translate-y-1/2 right-[9rem] z-[1]" />
-                        <select id="Offer"
-                            className="h-12 border border-gray-300 text-gray-900 dark:border-gray-600 dark:text-gray-100 pl-11 text-base font-normal leading-7 rounded-full block w-full py-2.5 px-4 appearance-none relative focus:outline-none bg-white dark:bg-black transition-all duration-500 hover:border-gray-400 hover:bg-gray-50 focus-within:bg-gray-50 dark:hover:border-gray-500 dark:hover:bg-gray-950 dark:focus-within:bg-gray-950">
-                            <option selected>Sort</option>
-                            <option value="option 1">Date</option>
-                            <option value="option 2">Alphabetically</option>
-                            <option value="option 3">Decreasing</option>
+                        <select
+                            id="Offer"
+                            className="h-12 border border-gray-300 text-gray-900 dark:border-gray-600 dark:text-gray-100 pl-11 text-base font-normal leading-7 rounded-full block w-full py-2.5 px-4 appearance-none relative focus:outline-none bg-white dark:bg-black transition-all duration-500 hover:border-gray-400 hover:bg-gray-50 focus-within:bg-gray-50 dark:hover:border-gray-500 dark:hover:bg-gray-950 dark:focus-within:bg-gray-950"
+                            onChange={(e) => setSortType(e.target.value)}
+                        >
+                            <option value="" selected disabled className="text-gray-400 dark:text-gray-500">Sort</option>
+                            <option value="date">Date</option>
+                            <option value="alpha">Alphabet</option>
+                            <option value="dsc">ASC | DSC</option>
                         </select>
                         <FaChevronDown className="absolute top-1/2 -translate-y-1/2 right-4 text-gray-900 dark:text-gray-100" />
                     </div>
@@ -178,6 +301,7 @@ const MyCourses = () => {
                                                         name="title"
                                                         type="text"
                                                         placeholder="Title of Course"
+                                                        required
                                                         autoComplete="on"
                                                         value={title}
                                                         onChange={(e) => setTitle(e.target.value)}
@@ -196,12 +320,13 @@ const MyCourses = () => {
                                                     id="about"
                                                     name="about"
                                                     rows={3}
+                                                    required
                                                     className="block w-full px-2 rounded-md border-0 py-1.5 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-400 sm:text-sm/6"
                                                     value={description}
                                                     onChange={(e) => setDescription(e.target.value)}
                                                 />
                                             </div>
-                                            <p className="mt-3 text-sm/6 text-gray-800 dark:text-gray-200">Write a few sentences about yourself.</p>
+                                            <p className="mt-3 text-sm/6 text-gray-800 dark:text-gray-200">Write a few sentences about this course, whom is this course for, difficulty level and so on.</p>
                                         </div>
 
                                         <div className="col-span-full">
@@ -224,6 +349,7 @@ const MyCourses = () => {
                                                         // value={thumbnail}
                                                         onChange={handleChangeThumbnail}
                                                         accept="image/*"
+                                                        required
                                                     />
                                                 </label>
                                             </div>
@@ -289,7 +415,7 @@ const MyCourses = () => {
             )}
 
             <div className={`${sidebarActive ? 'flex flex-col gap-4' : 'grid grid-cols-2 gap-4 px-4'}`}>
-                {courses.length > 0 ? courses.map(course => (
+                {(Array.isArray(searchedCourses) && searchedCourses.length > 0) ? searchedCourses.map(course => (
                     <div key={course.id} className="flex flex-row bg-white dark:bg-gray-800 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px] dark:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)] rounded-xl overflow-hidden">
                         <img
                             src={course.image}

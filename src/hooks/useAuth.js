@@ -1,5 +1,5 @@
 // src/hooks/useAuth.js
-import { useState, useContext, createContext } from 'react';
+import { useState, useContext, createContext, useCallback } from 'react';
 
 // Load environment variables
 const { REACT_APP_EXPRESS_APP_URL: EXPRESS_APP_URL } = process.env;
@@ -167,7 +167,7 @@ function useProvideAuth() {
         }
     };
 
-    const callBackendApi = async (url, method, body) => {
+    const callBackendApi = useCallback(async (url, method, body) => {
         try {
             const options = {
                 method: method,
@@ -193,7 +193,7 @@ function useProvideAuth() {
             console.error('API call error: ', error);
             throw new Error('API call error, failed to interact with backend.');
         }
-    }
+    }, []);
 
     const logout = async () => {
         try {
@@ -223,8 +223,32 @@ function useProvideAuth() {
         }
     };
 
+    const updateRole = async ({ accessTokenNew, rolesNew }) => {
+        try {
+            setAccount({
+                ...account,
+                roles: rolesNew,
+                admin: rolesNew.indexOf('admin') !== -1,
+            });
+            localStorage.setItem('account', JSON.stringify({
+                id: account.id,
+                name: account.name,
+                email: account.email,
+                avatar: account.avatar,
+                cover: account.cover,
+                roles: rolesNew,
+                admin: rolesNew.indexOf('admin') !== -1,
+                premium: account.premium
+            }));
+            localStorage.setItem('accessToken', accessTokenNew);
+        } catch (error) {
+            console.error('Update role error:', error);
+        }
+    }
+
     return {
         account,
+        updateRole,
         signup,
         login,
         refresh,
