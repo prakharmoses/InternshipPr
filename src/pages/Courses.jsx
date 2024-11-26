@@ -38,6 +38,23 @@ const dummyCourses = [
   { tutorImg: pic7, tutorName: 'John Deo', date: '21-10-2022', thumbImg: thumb6, contentCount: 10, title: 'Complete SASS Tutorial', id: 6, category: 'business', status: 'ended' },
 ]
 
+const dummyFilter = [
+  {
+    id: 'tutorName', name: 'Instructor', options: []
+  },
+  {
+    id: 'category', name: 'Category', options: []
+  },
+  {
+    id: 'status', name: 'Status', options: [
+      { id: '', name: 'All' },
+      { id: 'ongoing', name: 'Ongoing' },
+      { id: 'upcoming', name: 'Upcoming' },
+      { id: 'ended', name: 'Ended' },
+    ]
+  },
+]
+
 export default function Courses() {
   const { sidebarActive } = useSidebar();
   const { callBackendApi } = useAccount();
@@ -45,32 +62,7 @@ export default function Courses() {
 
   // Defining State
   const [courses, setCourses] = useState([]);
-  const [filters, setFilters] = useState([
-    {
-      id: 'instructor', name: 'Instructor', options: [
-        { id: '', name: 'All' },
-        { id: 'john-doe', name: 'John Doe' },
-        { id: 'jane-doe', name: 'Jane Doe' },
-        { id: 'joe-doe', name: 'Joe Doe' },
-      ]
-    },
-    {
-      id: 'category', name: 'Category', options: [
-        { id: '', name: 'All' },
-        { id: 'Development', name: 'Development' },
-        { id: 'Business', name: 'Business' },
-        { id: 'Management', name: 'Management' },
-      ]
-    },
-    {
-      id: 'status', name: 'Status', options: [
-        { id: '', name: 'All' },
-        { id: 'ongoing', name: 'Ongoing' },
-        { id: 'upcoming', name: 'Upcoming' },
-        { id: 'ended', name: 'Ended' },
-      ]
-    },
-  ])
+  const [filters, setFilters] = useState(dummyFilter);
   const [selectedFilters, setSelectedFilters] = useState({
     instructor: '',
     category: '',
@@ -82,10 +74,13 @@ export default function Courses() {
   const [searchedCourses, setSearchedCourses] = useState(sortedCourses);
   const [displayViewMore, setDisplayViewMore] = useState(true);
 
+  // Category filter logic on rendering
+  const categoryQuery = searchParams.get('category');
+
   // Defining functions
   const fetchCourses = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/courses/${courses.length + maxNumCourses}`);
+      const response = await fetch(`${process.env.REACT_APP_EXPRESS_APP_URL}/courses/getCourses/${courses.length + maxNumCourses}`);
       const data = await response.json();
 
       if (response.status === 200) {
@@ -139,7 +134,7 @@ export default function Courses() {
       if (response.status === 200) {
         setFilters((prevFilters) =>
           prevFilters.map((filter) =>
-            filter.id === 'instructor'
+            filter.id === 'tutorName'
               ? {
                 ...filter,
                 options: [
@@ -163,6 +158,13 @@ export default function Courses() {
     fetchTutors();
     fetchCourses();
   }, []);
+
+  // Handling category filter logic upon render
+  useEffect(() => {
+    if (categoryQuery) {
+      setSelectedFilters({ ...selectedFilters, category: categoryQuery });
+    }
+  }, [categoryQuery]);
 
   // Handling filter functionality
   useEffect(() => {
@@ -227,8 +229,8 @@ export default function Courses() {
                     onChange={(e) => setSelectedFilters({ ...selectedFilters, [filter.id]: e.target.value })}
                     className="cursor-pointer mt-2 block w-full rounded-md border text-black dark:text-white border-gray-100 dark:border-gray-900 bg-gray-100 dark:bg-gray-900 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                   >
-                    {filter.options.map((option, index) => (
-                      <option key={index} value={option.id}>{option.name}</option>
+                    {filter.options.length > 0 && filter.options.map((option, index) => (
+                      <option key={index} value={option.id} selected={option.id === selectedFilters[filter.id]}>{option.name}</option>
                     ))}
                   </select>
                 </div>

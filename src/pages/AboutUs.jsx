@@ -17,64 +17,66 @@ import { useAccount } from '../hooks/useAuth';
 // Import components
 import Modal from '../components/Modal';
 
+const dummyReviews = [
+    {
+        name: 'Kanye West',
+        stars: 5,
+        text: 'Find God.',
+        image: 'https://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v_400x400.jpg'
+    }, {
+        name: 'Tim Cook',
+        stars: 4.5,
+        text: 'Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum.',
+        image: 'https://pbs.twimg.com/profile_images/1535420431766671360/Pwq-1eJc_400x400.jpg'
+    }, {
+        name: 'Parag Agrawal',
+        stars: 4,
+        text: 'Enim neque volutpat ac tincidunt vitae semper. Mattis aliquam faucibus purus in massa tempor. Neque vitae tempus quam pellentesque nec. Turpis cursus in hac habitasse platea dictumst.',
+        image: 'https://pbs.twimg.com/profile_images/1375285353146327052/y6jeByyD_400x400.jpg'
+    }, {
+        name: 'Satya Nadella',
+        stars: 4.5,
+        text: 'Tortor dignissim convallis aenean et tortor at. At ultrices mi tempus imperdiet nulla malesuada. Id cursus metus aliquam eleifend mi. Quis ipsum suspendisse ultrices gravida dictum fusce ut.',
+        image: 'https://pbs.twimg.com/profile_images/1221837516816306177/_Ld4un5A_400x400.jpg'
+    }, {
+        name: 'Dan Schulman',
+        stars: 3.5,
+        text: 'Quam pellentesque nec nam aliquam sem et tortor consequat id. Enim sit amet venenatis urna cursus.',
+        image: 'https://pbs.twimg.com/profile_images/516916920482672641/3jCeLgFb_400x400.jpeg'
+    }, {
+        name: 'Kanye West',
+        stars: 5,
+        text: 'Find God.',
+        image: 'https://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v_400x400.jpg'
+    }, {
+        name: 'Tim Cook',
+        stars: 4.5,
+        text: 'Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum.',
+        image: 'https://pbs.twimg.com/profile_images/1535420431766671360/Pwq-1eJc_400x400.jpg'
+    }, {
+        name: 'Parag Agrawal',
+        stars: 4,
+        text: 'Enim neque volutpat ac tincidunt vitae semper. Mattis aliquam faucibus purus in massa tempor. Neque vitae tempus quam pellentesque nec. Turpis cursus in hac habitasse platea dictumst.',
+        image: 'https://pbs.twimg.com/profile_images/1375285353146327052/y6jeByyD_400x400.jpg'
+    }, {
+        name: 'Satya Nadella',
+        stars: 4.5,
+        text: 'Tortor dignissim convallis aenean et tortor at. At ultrices mi tempus imperdiet nulla malesuada. Id cursus metus aliquam eleifend mi. Quis ipsum suspendisse ultrices gravida dictum fusce ut.',
+        image: 'https://pbs.twimg.com/profile_images/1221837516816306177/_Ld4un5A_400x400.jpg'
+    }, {
+        name: 'Dan Schulman',
+        stars: 3.5,
+        text: 'Quam pellentesque nec nam aliquam sem et tortor consequat id. Enim sit amet venenatis urna cursus.',
+        image: 'https://pbs.twimg.com/profile_images/516916920482672641/3jCeLgFb_400x400.jpeg'
+    }
+]
+
 export default function AboutUs() {
     const { sidebarActive } = useSidebar();
     const { callBackendApi } = useAccount();
 
     // Defining states
-    const [reviews, setReviews] = useState([
-        {
-            name: 'Kanye West',
-            stars: 5,
-            text: 'Find God.',
-            image: 'https://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v_400x400.jpg'
-        }, {
-            name: 'Tim Cook',
-            stars: 4.5,
-            text: 'Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum.',
-            image: 'https://pbs.twimg.com/profile_images/1535420431766671360/Pwq-1eJc_400x400.jpg'
-        }, {
-            name: 'Parag Agrawal',
-            stars: 4,
-            text: 'Enim neque volutpat ac tincidunt vitae semper. Mattis aliquam faucibus purus in massa tempor. Neque vitae tempus quam pellentesque nec. Turpis cursus in hac habitasse platea dictumst.',
-            image: 'https://pbs.twimg.com/profile_images/1375285353146327052/y6jeByyD_400x400.jpg'
-        }, {
-            name: 'Satya Nadella',
-            stars: 4.5,
-            text: 'Tortor dignissim convallis aenean et tortor at. At ultrices mi tempus imperdiet nulla malesuada. Id cursus metus aliquam eleifend mi. Quis ipsum suspendisse ultrices gravida dictum fusce ut.',
-            image: 'https://pbs.twimg.com/profile_images/1221837516816306177/_Ld4un5A_400x400.jpg'
-        }, {
-            name: 'Dan Schulman',
-            stars: 3.5,
-            text: 'Quam pellentesque nec nam aliquam sem et tortor consequat id. Enim sit amet venenatis urna cursus.',
-            image: 'https://pbs.twimg.com/profile_images/516916920482672641/3jCeLgFb_400x400.jpeg'
-        }, {
-            name: 'Kanye West',
-            stars: 5,
-            text: 'Find God.',
-            image: 'https://pbs.twimg.com/profile_images/1276461929934942210/cqNhNk6v_400x400.jpg'
-        }, {
-            name: 'Tim Cook',
-            stars: 4.5,
-            text: 'Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum.',
-            image: 'https://pbs.twimg.com/profile_images/1535420431766671360/Pwq-1eJc_400x400.jpg'
-        }, {
-            name: 'Parag Agrawal',
-            stars: 4,
-            text: 'Enim neque volutpat ac tincidunt vitae semper. Mattis aliquam faucibus purus in massa tempor. Neque vitae tempus quam pellentesque nec. Turpis cursus in hac habitasse platea dictumst.',
-            image: 'https://pbs.twimg.com/profile_images/1375285353146327052/y6jeByyD_400x400.jpg'
-        }, {
-            name: 'Satya Nadella',
-            stars: 4.5,
-            text: 'Tortor dignissim convallis aenean et tortor at. At ultrices mi tempus imperdiet nulla malesuada. Id cursus metus aliquam eleifend mi. Quis ipsum suspendisse ultrices gravida dictum fusce ut.',
-            image: 'https://pbs.twimg.com/profile_images/1221837516816306177/_Ld4un5A_400x400.jpg'
-        }, {
-            name: 'Dan Schulman',
-            stars: 3.5,
-            text: 'Quam pellentesque nec nam aliquam sem et tortor consequat id. Enim sit amet venenatis urna cursus.',
-            image: 'https://pbs.twimg.com/profile_images/516916920482672641/3jCeLgFb_400x400.jpeg'
-        }
-    ]);
+    const [reviews, setReviews] = useState(dummyReviews);
     const [partOne, setPartOne] = useState([]);
     const [partTwo, setPartTwo] = useState([]);
     const [partThree, setPartThree] = useState([]);
@@ -117,15 +119,9 @@ export default function AboutUs() {
             const data = await response.json();
 
             if (response.status === 200) {
-                const transformedFeedback = data.map(item => ({
-                    name: item.userName,
-                    image: item.userAvatar,
-                    stars: item.rating,
-                    text: item.comment,
-                }));
-                setReviews(transformedFeedback);
+                setReviews(data);
             } else if (response.status === 404) {
-                setReviews([]);
+                setReviews(dummyReviews);
             } else {
                 throw new Error(data.message);
             }
@@ -135,7 +131,7 @@ export default function AboutUs() {
     }
 
     useEffect(() => {
-        if (reviews.length > 0) {
+        if (Array.isArray(reviews) && reviews.length > 0) {
             const partSize = Math.ceil(reviews.length / 3);
             setPartOne(reviews.slice(0, partSize));
             setPartTwo(reviews.slice(partSize, partSize * 2));
@@ -254,7 +250,7 @@ export default function AboutUs() {
         fetchBrilliantStudents();
         fetchOnlineCourses();
         fetchTutors();
-        // fetchReviews();
+        fetchReviews();
     }, []);
 
     useEffect(() => {
@@ -407,7 +403,7 @@ export default function AboutUs() {
                                 <li key={idx} className="text-sm leading-6">
                                     <div className="relative group">
                                         <div className="absolute transition rounded-lg opacity-25 -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 blur duration-400 group-hover:opacity-100 group-hover:duration-200" />
-                                        <a href="https://twitter.com/kanyewest" className="cursor-pointer">
+                                        <Link to={review.image} className="cursor-pointer">
                                             <div className="relative p-6 space-y-6 leading-none rounded-lg bg-slate-800 ring-1 ring-gray-900/5">
                                                 <div className="flex items-center space-x-4">
                                                     <img
@@ -435,7 +431,7 @@ export default function AboutUs() {
                                                 </div>
                                                 <p className="leading-normal text-gray-300 text-md">{review.text}</p>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
                                 </li>
                             ))}
@@ -446,7 +442,8 @@ export default function AboutUs() {
                                     <div className="relative group">
                                         <div
                                             className="absolute transition rounded-lg opacity-25 -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 blur duration-400 group-hover:opacity-100 group-hover:duration-200">
-                                        </div><a href="https://twitter.com/paraga" className="cursor-pointer">
+                                        </div>
+                                        <Link to={review.image} className="cursor-pointer">
                                             <div
                                                 className="relative p-6 space-y-6 leading-none rounded-lg bg-slate-800 ring-1 ring-gray-900/5">
                                                 <div className="flex items-center space-x-4">
@@ -475,7 +472,7 @@ export default function AboutUs() {
                                                 </div>
                                                 <p className="leading-normal text-gray-300 text-md">{review.text}</p>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
                                 </li>
                             ))}
@@ -486,7 +483,8 @@ export default function AboutUs() {
                                     <div className="relative group">
                                         <div
                                             className="absolute transition rounded-lg opacity-25 -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 blur duration-400 group-hover:opacity-100 group-hover:duration-200">
-                                        </div><a href="https://twitter.com/satyanadella" className="cursor-pointer">
+                                        </div>
+                                        <Link to={review.image} className="cursor-pointer">
                                             <div
                                                 className="relative p-6 space-y-6 leading-none rounded-lg bg-slate-800 ring-1 ring-gray-900/5">
                                                 <div className="flex items-center space-x-4">
@@ -515,7 +513,7 @@ export default function AboutUs() {
                                                 </div>
                                                 <p className="leading-normal text-gray-300 text-md">{review.text}</p>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
                                 </li>
                             ))}

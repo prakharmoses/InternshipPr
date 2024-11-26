@@ -31,7 +31,7 @@ const dummyUser = {
 
 export default function Profile() {
   const { sidebarActive } = useSidebar();
-  const { account, callBackendApi } = useAccount();
+  const { account, callBackendApi, updateProfileInfo } = useAccount();
   const { profileId } = useParams();
   const location = useLocation();
 
@@ -113,7 +113,7 @@ export default function Profile() {
 
       const response = await callBackendApi(`/users/updateProfile`, 'PATCH', nonEmptyFields);
       const data = await response.json();
-      console.log("The reponse from profile Update recieved is: ", response);
+
       if (response.status === 200) {
         if (newDetail.email !== account.email) {
           setIsEmailVerified(false);
@@ -126,6 +126,12 @@ export default function Profile() {
           avatar: newDetail.avatar,
           cover: newDetail.cover,
         })
+        updateProfileInfo({
+          name: newDetail.name,
+          email: newDetail.email,
+          avatar: newDetail.avatar,
+          cover: newDetail.cover,
+        });
         setEdit(false);
       } else {
         alert(data.message);

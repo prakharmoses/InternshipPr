@@ -223,17 +223,18 @@ function useProvideAuth() {
         }
     };
 
-    const updateRole = async ({ accessTokenNew, rolesNew }) => {
+    const updateAccessParameters = async ({ accessTokenNew, rolesNew, newEmail }) => {
         try {
             setAccount({
                 ...account,
                 roles: rolesNew,
                 admin: rolesNew.indexOf('admin') !== -1,
+                email: newEmail
             });
             localStorage.setItem('account', JSON.stringify({
                 id: account.id,
                 name: account.name,
-                email: account.email,
+                email: newEmail,
                 avatar: account.avatar,
                 cover: account.cover,
                 roles: rolesNew,
@@ -246,9 +247,34 @@ function useProvideAuth() {
         }
     }
 
+    const updateProfileInfo = async ({ name, avatar, cover, email }) => {
+        try {
+            setAccount({
+                ...account,
+                name,
+                avatar,
+                cover,
+                email
+            });
+            localStorage.setItem('account', JSON.stringify({
+                id: account.id,
+                name: name,
+                email: email,
+                avatar: avatar,
+                cover: cover,
+                roles: account.roles,
+                admin: account.admin,
+                premium: account.premium
+            }));
+        } catch (error) {
+            console.error('Update profile info error:', error);
+        }
+    }
+
     return {
         account,
-        updateRole,
+        updateAccessParameters,
+        updateProfileInfo,
         signup,
         login,
         refresh,

@@ -29,7 +29,7 @@ const dummyTutors = [
 
 export default function Teachers() {
     const { sidebarActive } = useSidebar();
-    const { account, updateRole, callBackendApi } = useAccount();
+    const { account, updateAccessParameters, callBackendApi } = useAccount();
     const navigate = useNavigate();
 
     // Defining State
@@ -51,7 +51,7 @@ export default function Teachers() {
               if (response.status === 409 || response.status === 201) {
                   if (response.status === 201) {
                       const data = await response.json();
-                      updateRole({ accessTokenNew: data.accessToken, rolesNew: data.roles });
+                      updateAccessParameters({ accessTokenNew: data.accessToken, rolesNew: data.roles, newEmail: account.email });
                   }
                   navigate(`/profile/${account.id}?tab=mycourses`);
               } else if (response.status === 417) {

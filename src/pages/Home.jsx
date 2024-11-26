@@ -63,7 +63,7 @@ const dummyCourses = [
 export default function Home() {
     const navigate = useNavigate();
     const { isDarkMode, setIsDarkMode, toggleDarkMode } = useDarkMode();
-    const { account, callBackendApi, updateRole } = useAccount();
+    const { account, callBackendApi, updateAccessParameters } = useAccount();
     const { sidebarActive } = useSidebar();
 
     // Initialising state
@@ -90,7 +90,7 @@ export default function Home() {
               if (response.status === 409 || response.status === 201) {
                   if (response.status === 201) {
                       const data = await response.json();
-                      updateRole({ accessTokenNew: data.accessToken, rolesNew: data.roles });
+                      updateAccessParameters({ accessTokenNew: data.accessToken, rolesNew: data.roles, newEmail: account.email });
                   }
                   navigate(`/profile/${account.id}?tab=mycourses`);
               } else if (response.status === 417) {
@@ -278,7 +278,7 @@ export default function Home() {
 
                 <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
                   {categories.map((category, idx) => (
-                    <Link key={idx} to={`/courses/${category.name}`} className="flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <Link key={idx} to={`/courses?category=${category}`} className="flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                       {categoryIcons[category]}
                       <span className="text-sm font-medium text-gray-900 dark:text-white">{category}</span>
                     </Link>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 // Importing context
 import { useSidebar } from '../context/SidebarContext';
@@ -28,9 +28,10 @@ const dummyCourse = {
   thumbImg: thumb1,
   contentCount: 10,
   title: 'Complete HTML Tutorial',
-  desctiption: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum minus reiciendis, error sunt veritatis exercitationem deserunt velit doloribus itaque voluptate.',
+  description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum minus reiciendis, error sunt veritatis exercitationem deserunt velit doloribus itaque voluptate.',
   content: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   saved: false,
+  status: 'upcoming'
 }
 const dummyCourseContent = [
   { title: 'Content 1', contentImg: thumb2, id: 1 },
@@ -49,38 +50,62 @@ export default function CourseDetails() {
   const { sidebarActive } = useSidebar();
   const { account, callBackendApi } = useAccount();
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
   // Defining Refs
   const textareaRef = useRef(null);
 
   // Defining State
   const [course, setCourse] = useState(dummyCourse);
-  const [courseContent, setCourseContent] = useState(dummyCourseContent);
+  const [courseContent, setCourseContent] = useState([]);
   const [title, setTitle] = useState(course.title);
-  const [description, setDescription] = useState(course.desctiption);
-  const [newContentModalOpen, setNewContentModalOpen] = useState(false);
+  const [description, setDescription] = useState(course.description);
 
   // Handling Course Title Change
-  const handleCourseTitleChange = () => {
+  const handleCourseTitleChange = async () => {
     if (title !== course.title) {
-      // try {
-      //   const response = callBackendApi('PATCH', `/courses/${course.id}`, { title });
-      //   setCourse({ ...course, title });
-      // } catch (error) {
-      //   console.error('Error updating course title:', error);
-      // }
+      try {
+        const updateBody = {
+          courseId: courseId,
+          title: title
+        }
+        const response = await callBackendApi(`/courses/update`, 'PATCH', updateBody);
+
+        if (response.status === 200) {
+          setCourse({ ...course, title: title });
+        } else {
+          const data = await response.json();
+          setTitle(course.title);
+          alert(`Error updating course title: ${data.message}`);
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Error updating course title:', error);
+      }
     }
   }
 
   // Handling Course Description Change
-  const handleCourseDescriptionChange = () => {
-    if (description !== course.desctiption) {
-      // try {
-      //   const response = callBackendApi('PATCH', `/courses/${course.id}`, { desctiption: description });
-      //   setCourse({ ...course, desctiption: description });
-      // } catch (error) {
-      //   console.error('Error updating course description:', error);
-      // }
+  const handleCourseDescriptionChange = async () => {
+    if (description !== course.description) {
+      try {
+        const updateBody = {
+          courseId: courseId,
+          description: description
+        }
+        const response = await callBackendApi(`/courses/update`, 'PATCH', updateBody);
+
+        if (response.status === 200) {
+          setCourse({ ...course, description: description });
+        } else {
+          const data = await response.json();
+          setDescription(course.description);
+          alert(`Error updating course description: ${data.message}`);
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Error updating course description: ', error);
+      }
     }
   }
 
@@ -100,6 +125,30 @@ export default function CourseDetails() {
     }
   }
 
+  // Handling Course Status
+  const handleToggleStatus = async () => {
+    if (course.status === 'upcoming') {
+      navigate(`/content/${courseId}/new-content`);
+    } else {
+      const updateBody = {
+        courseId: courseId,
+        status: course.status === 'ended' ? 'ongoing' : 'ended'
+      }
+      try {
+        const response = await callBackendApi(`/courses/update`, 'PATCH', updateBody);
+        const data = await response.json();
+
+        if (response.status === 200) {
+          setCourse({ ...course, status: course.status === 'ended' ? 'ongoing' : 'ended' });
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (err) {
+        console.error('Error updating course status: ', err);
+      }
+    }
+  }
+
   // Define functions using useEffect
   useEffect(() => {
     if (textareaRef.current) {
@@ -112,7 +161,6 @@ export default function CourseDetails() {
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
-      console.log('Fetching course details');
       try {
         const response = await callBackendApi(`/courses/getOneCourse/${courseId}`, 'GET', null);
         const data = await response.json();
@@ -131,11 +179,13 @@ export default function CourseDetails() {
 
     const fetechCourseContent = async () => {
       try {
-        const response = fetch(`${process.env.REACT_APP_API_URL}/courses/${course.id}/content`);
+        const response = await callBackendApi(`/content/getContentByCourse/${courseId}`, 'GET', null);
         const data = await response.json();
+        
         if (response.status === 200) {
           setCourseContent(data);
         } else {
+          setCourseContent([]);
           throw new Error(data.message)
         }
       } catch (err) {
@@ -144,7 +194,7 @@ export default function CourseDetails() {
     }
 
     fetchCourseDetails();
-    // fetechCourseContent();
+    fetechCourseContent();
   }, [])
 
   return (
@@ -157,6 +207,12 @@ export default function CourseDetails() {
           size={title.length || 1}
           onChange={(e) => setTitle(e.target.value)}
           onBlur={handleCourseTitleChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.target.blur();
+            }
+          }}
           disabled={account.id !== course.tutorId}
         />
         <div className="flex flex-row flex-wrap gap-12 bg-white dark:bg-black p-8 shadow-[0_0_10px_2px_#2dd4bf] dark:shadow-[0_0_20px_5px_#2dd4bf] mx-10 my-8">
@@ -176,7 +232,7 @@ export default function CourseDetails() {
                 className="h-[16rem] object-cover rounded-lg"
               />
               <span className="text-lg text-white bg-black/30 rounded-lg absolute top-4 left-4 py-2 px-6">
-                {course.content.length} Items
+                {course.contentCount} Items
               </span>
             </div>
           </div>
@@ -198,10 +254,7 @@ export default function CourseDetails() {
                 ref={textareaRef}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                onBlur={() => {
-                  // Add function to handle saving the data on blur
-                  handleCourseDescriptionChange();
-                }}
+                onBlur={handleCourseDescriptionChange}
                 disabled={account.id !== course.tutorId}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -217,37 +270,15 @@ export default function CourseDetails() {
                   <span className="fold-bold relative inline-block h-full w-full rounded border-2 border-black dark:bg-white bg-black px-3 py-1 text-base font-bold dark:text-black text-white transition duration-100 hover:dark:bg-yellow-300 hover:bg-gray-900 hover:dark:text-gray-900 hover:text-yellow-300">View Profile</span>
                 </Link>
               ) : (
-                <Link className="relative w-[fit-content]" to={`/profile/${course.tutorId}`}>
+                <button className="relative w-[fit-content]" onClick={handleToggleStatus}>
                   <span className="absolute top-0 left-0 mt-1 ml-1 h-full w-full rounded border-2 dark:bg-black border-gray-400 bg-gray-400"></span>
-                  <span className="fold-bold relative inline-block h-full w-full rounded border-2 border-black dark:bg-white bg-black px-3 py-1 text-base font-bold dark:text-black text-white transition duration-100 hover:dark:bg-yellow-300 hover:bg-gray-900 hover:dark:text-gray-900 hover:text-yellow-300">Mark as Completed</span>
-                </Link>
+                  <span className="fold-bold relative inline-block h-full w-full rounded border-2 border-black dark:bg-white bg-black px-3 py-1 text-base font-bold dark:text-black text-white transition duration-100 hover:dark:bg-yellow-300 hover:bg-gray-900 hover:dark:text-gray-900 hover:text-yellow-300">{course.status !== 'ended' ? (course.contentCount > 0 ? 'Mark as Completed' : 'Create course content') : 'Re-open Course'}</span>
+                </button>
               )}
             </div>
           </div>
         </div>
       </section>
-
-      {/* New Content Modal */}
-      {newContentModalOpen && (
-        <Modal
-          title="New Content"
-          closeModal={() => setNewContentModalOpen(false)}
-        >
-          <div className="flex flex-col gap-4">
-            <input
-              type="text"
-              placeholder="Title"
-              className="input"
-            />
-            <input
-              type="text"
-              placeholder="Video URL"
-              className="input"
-            />
-            <button className="btn">Add Content</button>
-          </div>
-        </Modal>
-      )}
 
       {/* Playlist Videos Section */}
       <section className="playlist-videos py-8 mx-6">
@@ -256,12 +287,13 @@ export default function CourseDetails() {
             <div className="bg-black dark:bg-white text-7xl font-bold text-white dark:text-black px-8 py-4 rounded-[1rem]">Content</div>
           </div>
 
-          <Link
+          {course && account.id === course.tutorId ? <Link
             to={`/content/${courseId}/new-content`}
             className="flex flex-row items-center gap-4 w-[max-content] rounded-xl px-4 mr-14 py-2 border-dashed border-2 border-gray-300 text-gray-900 bg-gray-50 hover:bg-gray-200 dark:border-gray-600 dark:text-gray-100 dark:bg-gray-950 dark:hover:bg-gray-800 cursor-pointer"
-          ><TiPlus /> New Content</Link>
+          ><TiPlus /> New Content</Link> : null}
         </div>
-        <div className="box-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center items-start">
+        {Array.isArray(courseContent) && courseContent.length > 0 ? (
+          <div className="box-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center items-start">
           {courseContent.map((part) => (
             <Link
               key={part.id}
@@ -279,6 +311,9 @@ export default function CourseDetails() {
             </Link>
           ))}
         </div>
+        ) : (
+          <p className="text-center text-lg text-gray-500 dark:text-gray-400">No content available</p>
+        )}
       </section>
     </main>
   )
