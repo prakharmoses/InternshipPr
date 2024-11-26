@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const mongoose = require('mongoose');
 
 // Importing models
 const Company = require('../models/company');
@@ -49,7 +50,15 @@ const getFeedback = asyncHandler(async (req, res) => {
         },
         { $replaceRoot: { newRoot: "$topFeedback" } },  // Replace the root with the feedback object
         { $sort: { "rating": -1 } },  // Re-sort by rating in descending order
-        { $limit: 12 }  // Limit to top 12 unique feedback entries
+        { $limit: 12 },  // Limit to top 12 unique feedback entries
+        {
+            $project: {
+                name: '$userName',
+                stars: '$rating',
+                text: '$comment',
+                image: '$userAvatar'
+            }
+        }
     ]);
 
     if (!topFeedback || topFeedback.length === 0) {
@@ -57,7 +66,7 @@ const getFeedback = asyncHandler(async (req, res) => {
     }
 
     // Return the top feedback array
-    res.status(200).json(topFeedback[0].feedback);
+    res.status(200).json(topFeedback);
 })
 
 // @desc   Add feedback
@@ -65,7 +74,6 @@ const getFeedback = asyncHandler(async (req, res) => {
 // @access Private
 const addFeedback = asyncHandler(async (req, res) => {
     const { companyId, rating, comment } = req.body;  // Company ID, rating, and comment from request body
-    const { userId } = req.userId;  // User name from request user object
 
     // Check if all fields are given
     if (!companyId || !rating || !comment) {
@@ -81,7 +89,7 @@ const addFeedback = asyncHandler(async (req, res) => {
     }
 
     // Check for the user and authorization
-    const foundUser = await User.findById(userId).exec();
+    const foundUser = await User.findById(req.userId).exec();
     if (!foundUser) {
         res.status(404);
         throw new Error('User not found');

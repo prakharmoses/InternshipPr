@@ -9,10 +9,16 @@ const Tutor = require('../models/tutor');
 const Company = require('../models/company');
 
 // @desc   Get all courses
-// @route  GET /courses
+// @route  GET /courses/getCourses/:number
 // @access Public
 const getCourses = asyncHandler(async (req, res) => {
     const { number } = req.params;
+
+    // Check if number is empty
+    if (!number || !Number.isInteger(parseInt(number)) || isNaN(parseInt(number)) || parseInt(number) < 1) {
+        res.status(400);
+        throw new Error('Number is required and should be a positive integer.');
+    }
     
     const courses = await Course.aggregate([
         {
@@ -53,12 +59,13 @@ const getCourses = asyncHandler(async (req, res) => {
 // @desc   Get total courses
 // @route  GET /courses/totalCourses
 // @access Public
-const getTotalCourses = asyncHandler(async (req, res) => {
-    const totalCourses = await Course.find().countDocuments().exec();
+const totalCourses = asyncHandler(async (req, res) => {
+    const totalCourses = await Course.countDocuments();
 
-    // Check if no courses are found
-    if (totalCourses === 0) {
-        return res.status(404).json({ message: 'No courses found' });
+    // Check if totalCourses is empty
+    if (!totalCourses) {
+        res.status(404);
+        throw new Error('No courses found');
     }
 
     res.status(200).json({ totalCourses });
@@ -74,7 +81,7 @@ const getTopCourses = asyncHandler(async (req, res) => {
     // Check if number is empty
     if (!number || !Number.isInteger(number) || isNaN(number) || number < 1 || number % 1 !== 0) {
         res.status(400);
-        throw new Error('Number is required and should be an integer less than 10');
+        throw new Error('Number is required and should be a positive integer less than 10');
     }
 
     // Get top courses
@@ -131,6 +138,11 @@ const getOneCourse = asyncHandler(async (req, res) => {
             $match: { _id: new mongoose.Types.ObjectId(courseId) }
         },
         {
+            $addFields: {
+                contentCount: { $size: "$content" }
+            }
+        },
+        {
             $project: {
                 id: '$_id',
                 title: 1,
@@ -139,9 +151,10 @@ const getOneCourse = asyncHandler(async (req, res) => {
                 tutorName: 1,
                 tutorImg: '$tutorAvatar',
                 thumbImg: '$thumbnail',
-                content: 1,
+                contentCount: 1,
                 date: '$createdAt',
                 saved: { $in: [new mongoose.Types.ObjectId(req.userId), '$savedBy'] },
+                status: 1,
             }
         }
     ]);
@@ -215,7 +228,7 @@ const createCourse = asyncHandler(async (req, res) => {
 })
 
 // @desc   Update course
-// @route  PUT /courses/update
+// @route  PATCH /courses/update
 // @access Private
 const updateCourse = asyncHandler(async (req, res) => {
     const { courseId, title, description, category, status, thumbnail, content } = req.body;
@@ -227,7 +240,7 @@ const updateCourse = asyncHandler(async (req, res) => {
     }
 
     // Check if the content is in valid format
-    if (content && !Array.isArray(content) && content.length > 0 && !content.every(item => mongoose.Types.ObjectId.isValid(item))) {
+    if (content && (!Array.isArray(content) || content.length > 0) && !content.every(item => mongoose.Types.ObjectId.isValid(item))) {
         res.status(400);
         throw new Error('Content should be an array of mongoose object ids.');
     }
@@ -244,7 +257,7 @@ const updateCourse = asyncHandler(async (req, res) => {
         const courseExists = await Course.findOne({ title }).exec();
         if (courseExists && courseExists._id.toString() !== courseId) {
             res.status(400);
-            throw new Error('Course already exists');
+            throw new Error('Course name already taken');
         }
     }
 
@@ -404,7 +417,7 @@ const getSavedCourses = asyncHandler(async (req, res) => {
 
 module.exports = {
     getCourses,
-    getTotalCourses,
+    totalCourses,
     getTopCourses,
     getOneCourse,
     createCourse,

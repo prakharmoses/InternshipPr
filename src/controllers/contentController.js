@@ -5,11 +5,137 @@ const mongoose = require('mongoose');
 const Content = require('../models/content');
 const Course = require('../models/courses');
 const User = require('../models/user');
+const Tutor = require('../models/tutor');
+
+// Import config
+const transporter = require('../config/nodemailer');
 
 // @desc   Get one content
-// @route  GET /contents/oneContent
+// @route  GET /content/getContent/:contentId
 // @access Public
 const getContent = asyncHandler(async (req, res) => {
+    const { contentId } = req.params;
+
+    // Check if contentId is empty
+    if (!contentId) {
+        res.status(400);
+        throw new Error('Content ID is required');
+    }
+
+    // Fetching the content
+    const content = await Content.aggregate([
+        {
+            $match: { _id: new mongoose.Types.ObjectId(contentId) }
+        },
+        {
+            $addFields: { likes: { $size: '$likedBy' } }
+        },
+        {
+            $project: {
+                title: 1,
+                contentImg: 1,
+                contentType: 1,
+                content: 1,
+                description: 1,
+                likes: 1,
+                comments: 1,
+                createdAt: 1,
+                course: 1,
+                tutor: 1,
+                _id: 0
+            }
+        }
+    ])
+
+    // Check if the content exists
+    if (!content || !content.length) {
+        res.status(404);
+        throw new Error('Content not found');
+    }
+
+    res.status(200).json(content[0]);
+});
+
+// @desc   Get other content of course
+// @route  GET /contents/getOtherContentOfCourse/:courseId
+// @access Private
+const getOtherContentOfCourse = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+
+    // Check if courseId is empty
+    if (!courseId) {
+        res.status(400);
+        throw new Error('Course ID is required');
+    }
+
+    // Check if the course exists
+    const courseContent = await Course.findById(courseId).select('content').exec();
+    if (!courseContent) {
+        res.status(404);
+        throw new Error('Course not found');
+    }
+
+    // Get the contents
+    const contents = await Content.aggregate([
+        { $match: { _id: { $in: courseContent.content } } },
+        { $addFields: { likes: { $size: '$likedBy' } } },
+        { $project: {
+            id: '$_id',
+            title: 1,
+            contentImg: 1,
+            likes: 1,
+            createdAt: 1,
+            _id: 0
+        } }
+    ]);
+
+    // Check if there are contents
+    if (!contents.length) {
+        res.status(404);
+        throw new Error('No content found');
+    }
+
+    res.status(200).json(contents);
+})
+
+// @desc   Get content by course
+// @route  GET /contents/getContentByCourse/:courseId
+// @access Private
+const getContentByCourse = asyncHandler(async (req, res) => {
+    const { courseId } = req.params;
+
+    // Check if courseId is empty
+    if (!courseId) {
+        res.status(400);
+        throw new Error('Course ID is required');
+    }
+
+    // Check if the course exists
+    const courseContent = await Course.findById(courseId).select('content').exec();
+    if (!courseContent) {
+        res.status(404);
+        throw new Error('Course not found');
+    }
+
+    // Get the contents
+    const contents = await Content.aggregate([
+        { $match: { _id: { $in: courseContent.content } } },
+        { $project: { id: '$_id', title: 1, contentImg: 1, _id: 0 } }
+    ]);
+
+    // Check if there are contents
+    if (!contents.length) {
+        res.status(404);
+        throw new Error('No content found');
+    }
+
+    res.status(200).json(contents);
+})
+
+// @desc   Toggle like content
+// @route  PATCH /contents/toggleLikeContent
+// @access Private
+const toggleLikeContent = asyncHandler(async (req, res) => {
     const { contentId } = req.params;
 
     // Check if contentId is empty
@@ -25,17 +151,61 @@ const getContent = asyncHandler(async (req, res) => {
         throw new Error('Content not found');
     }
 
-    res.status(200).json(content);
-});
+    // Check if the user exists
+    const user = await User.findById(req.userId).exec();
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Check if the user has already liked the content
+    const index = content.likedBy.findIndex(item => item.toString() === req.userId.toString());
+    if (index === -1) {
+        content.likedBy.push(req.userId);      // Add the user to the likedBy array
+        user.likes.push(contentId);            // Add the content to the user's likedContent array
+    } else {
+        content.likedBy.splice(index, 1);      // Remove the user from the likedBy array
+        user.likes.splice(user.likes.indexOf(contentId), 1);  // Remove the content from the user's liked
+    }
+    await content.save();
+    await user.save();
+
+    res.status(200).json({ likes: content.likedBy.length });
+})
+
+// @desc   Is content liked
+// @route  GET /contents/isLiked/:contentId
+// @access Private
+const isContentLiked = asyncHandler(async (req, res) => {
+    const { contentId } = req.params;
+
+    // Check if contentId is empty
+    if (!contentId) {
+        res.status(400);
+        throw new Error('Content ID is required');
+    }
+
+    // Check if the content exists
+    const content = await Content.findById(contentId).exec();
+    if (!content) {
+        res.status(404);
+        throw new Error('Content not found');
+    }
+
+    // Check if the user has already liked the content
+    const index = content.likedBy.findIndex(item => item.toString() === req.userId.toString());
+    
+    res.status(200).json(index !== -1 ? true : false);
+})
 
 // @desc   Create content
 // @route  POST /contents/create
 // @access Private
 const createContent = asyncHandler(async (req, res) => {
-    const { title, contentImg, contentType, content, video, description, course, tutor } = req.body;
+    const { title, contentImg, contentType, content, description, course, tutor } = req.body;
 
     // Check if the necessary fields are given
-    if (!title || !contentImg || !contentType || !description || !course || !tutor) {
+    if (!title || !contentImg || !contentType || !description || !course || !tutor || !content) {
         res.status(400);
         throw new Error('Title, content image, content type, description, course and tutor are required');
     }
@@ -57,7 +227,7 @@ const createContent = asyncHandler(async (req, res) => {
     // Check if the user is authorized to create content
     if (foundCourse.tutor.toString() !== req.userId.toString() && !req.roles.includes('admin')) {
         res.status(403);
-        throw new Error('You are not authorized to create content');
+        throw new Error('You are not authorized to create content.');
     }
 
     // Check if the content already exists
@@ -72,15 +242,18 @@ const createContent = asyncHandler(async (req, res) => {
         title,
         contentImg,
         contentType,
-        content: content ? content : null,
-        video: video ? video : null,
+        content,
         description,
         course,
         tutor
     })
     await newContent.save();
 
-    res.status(201).json(newContent);
+    // Add the content to the course
+    foundCourse.content.push(newContent._id);
+    await foundCourse.save();
+
+    res.status(201).json(newContent._id);
 })
 
 // @desc   Update content
@@ -96,7 +269,7 @@ const updateContent = asyncHandler(async (req, res) => {
     }
 
     // Check if the content exists
-    const updatedContent = await Content.findById(content).exec();
+    const updatedContent = await Content.findById(contentId).exec();
     if (!updatedContent) {
         res.status(404);
         throw new Error('Content not found');
@@ -115,14 +288,14 @@ const updateContent = asyncHandler(async (req, res) => {
     }
 
     // Update the content
-    updatedContent.title = title ? title : updateContent.title;
-    updatedContent.contentImg = contentImg ? contentImg : updateContent.contentImg;
-    updatedContent.contentType = contentType ? contentType : updateContent.contentType;
-    updatedContent.content = content ? content : updateContent.content;
-    updatedContent.video = video ? video : updateContent.video;
-    updatedContent.description = description ? description : updateContent.description;
-    updatedContent.course = course ? course : updateContent.course;
-    await updateContent.save();
+    updatedContent.title = title ? title : updatedContent.title;
+    updatedContent.contentImg = contentImg ? contentImg : updatedContent.contentImg;
+    updatedContent.contentType = contentType ? contentType : updatedContent.contentType;
+    updatedContent.content = content ? content : updatedContent.content;
+    updatedContent.video = video ? video : updatedContent.video;
+    updatedContent.description = description ? description : updatedContent.description;
+    updatedContent.course = course ? course : updatedContent.course;
+    await updatedContent.save();
     
     res.status(200).json(updatedContent);
 })
@@ -161,12 +334,12 @@ const deleteContent = asyncHandler(async (req, res) => {
 // @route  PATCH /contents/addComment
 // @access Private
 const addComment = asyncHandler(async (req, res) => {
-    const { contentId, userName, userAvatar, comment } = req.body;
+    const { contentId, comment } = req.body;
 
     // Check if all the fields are given
-    if (!contentId || !userName || !userAvatar || !comment) {
+    if (!contentId || !comment) {
         res.status(400);
-        throw new Error('Content ID, user ID, user name, user avatar and comment are required');
+        throw new Error('Content ID and comment are required');
     }
 
     // Check if the content exists
@@ -176,18 +349,44 @@ const addComment = asyncHandler(async (req, res) => {
         throw new Error('Content not found');
     }
 
-    // Add comment
-    const newComment = {
-        _id: mongoose.Types.ObjectId(),
-        userId: req.userId,
-        userName: userName,
-        userAvatar: userAvatar,
-        comment: comment,
+    // Check if the user exists
+    const user = await User.findById(req.userId).exec();
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
     }
-    foundContent.comment.push(newComment);
+
+    // Add comment to the content
+    const newComment = {
+        _id: new mongoose.Types.ObjectId(),
+        userId: req.userId,
+        userName: user.name,
+        userAvatar: user.avatar,
+        comment: comment,
+        reply: []
+    }
+    foundContent.comments.push(newComment);
     await foundContent.save();
 
-    res.status(200).json({ content: foundContent, commentId: newComment._id });
+    // Add comment content entry into user's comments array
+    user.comments.push(foundContent._id);
+    await user.save();
+
+    // Notify the tutor about the comment via email and send the response
+    const tutor = await User.findById(foundContent.tutor).exec();
+    const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: tutor.email,
+        subject: `New Comment from ${user.name} on ${foundContent.title}`,
+        text: `Hello ${tutor.name},\n\nYou have a new comment on your content by ${user.name}.\n\nComment: ${comment}\n\nRegards,\nAngirasoft`
+    }
+
+    await transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error sending email', error: err });
+        }
+        return res.status(201).json({ comments: foundContent.comments });
+    })
 })
 
 // @desc   Add comment reply
@@ -231,6 +430,10 @@ const addCommentReply = asyncHandler(async (req, res) => {
 
 module.exports = {
     getContent,
+    getOtherContentOfCourse,
+    getContentByCourse,
+    toggleLikeContent,
+    isContentLiked,
     createContent,
     updateContent,
     deleteContent,

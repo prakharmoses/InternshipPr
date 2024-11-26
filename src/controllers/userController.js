@@ -172,6 +172,12 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         throw new Error('Invalid date of birth');
     }
 
+    // Check if phone number is valid
+    if (phoneNo && !phoneNo.match(/^\d{10}$/)) {
+        res.status(400);
+        throw new Error('Invalid phone number');
+    }
+
     // Check for the authorization
     if (!req.roles.includes('admin') && req.email !== email) {
         res.status(403);

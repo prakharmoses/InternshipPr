@@ -8,8 +8,8 @@ const verifyJWT = require('../middlewares/verifyJWT')
 const courseController = require('../controllers/courseController')
 
 // Defining Routes
-router.get('/:number', courseController.getCourses)
-router.get('/totalCourses', courseController.getTotalCourses)
+router.get('/getCourses/:number', courseController.getCourses)
+router.get('/totalCourses', courseController.totalCourses)
 router.get('/topCourses/:number', courseController.getTopCourses)
 router.get('/getOneCourse/:courseId', verifyJWT, courseController.getOneCourse)
 router.post('/add', verifyJWT, courseController.createCourse)

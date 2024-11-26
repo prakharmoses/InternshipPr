@@ -65,14 +65,12 @@ const contentSchema = new mongoose.Schema(
         },
         contentType: {
             type: String,
-            enum: ['text', 'video'],
+            enum: ['document', 'video'],
             required: [true, 'Content type is required'],
         },
         content: {
             type: String,
-        },
-        video: {
-            type: String,
+            default: "",
         },
         description: {
             type: String,
