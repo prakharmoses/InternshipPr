@@ -16,6 +16,7 @@ import { useAccount } from '../hooks/useAuth';
 
 // Import components
 import Modal from '../components/Modal';
+import LoadingUI from '../components/LoadingUI';
 
 const dummyReviews = [
     {
@@ -89,6 +90,7 @@ export default function AboutUs() {
         comment: '',
         rating: 5
     });
+    const [isPageLoaded, setIsPageLoaded] = useState(false);
 
     // Defining functions
     const handleRatingSubmit = async (e) => {
@@ -277,8 +279,20 @@ export default function AboutUs() {
         fetchPlacements();
     }, [brilliantStudents]);
 
+    setTimeout(() => {
+        setIsPageLoaded(true);
+    }, [1000]);
+
+    if (!isPageLoaded) {
+        return (
+            <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+                <LoadingUI />
+            </main>
+        )
+    }
+
     return (
-        <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[7rem] bg-slate-100 dark:bg-slate-900`}>
+        <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
             {/* About Us Section */}
             <section className="about p-4">
                 <div className="flex flex-row items-center justify-between flex-wrap sm:w-[30rem] md:w-[50rem] lg:w-[63rem] mx-auto">

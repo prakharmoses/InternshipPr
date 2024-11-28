@@ -8,7 +8,7 @@ import { useSidebar } from '../context/SidebarContext';
 import { useAccount } from '../hooks/useAuth';
 
 // Import components
-import Modal from '../components/Modal';
+import LoadingUI from '../components/LoadingUI';
 
 // Import icons
 import { TiPlus } from 'react-icons/ti';
@@ -60,6 +60,7 @@ export default function CourseDetails() {
   const [courseContent, setCourseContent] = useState([]);
   const [title, setTitle] = useState(course.title);
   const [description, setDescription] = useState(course.description);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   // Handling Course Title Change
   const handleCourseTitleChange = async () => {
@@ -197,8 +198,20 @@ export default function CourseDetails() {
     fetechCourseContent();
   }, [])
 
-  return (
-    <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[4rem] bg-white dark:bg-black text-gray-900 dark:text-gray-100`}>
+  setTimeout(() => {
+    setIsPageLoaded(true);
+}, [1000]);
+
+if (!isPageLoaded) {
+    return (
+        <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+            <LoadingUI />
+        </main>
+    )
+}
+
+return (
+    <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
       <section className="playlist-details py-8">
         <input
           className="text-2xl md:text-3xl pl-2 my-2 mx-10 max-w-[60rem] w-[fit-content] border-l-4 font-sans font-bold inline-block bg-transparent border-teal-400  dark:text-gray-200 focus:outline-none focus:border-b-2 py-1 focus:border-b-black focus:dark:border-b-white"

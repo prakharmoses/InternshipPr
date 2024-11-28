@@ -13,11 +13,11 @@ import { useAccount } from '../hooks/useAuth.js';
 
 // Importing Components
 import Modal from '../components/Modal';
-import CourseCard from '../components/CourseCard';
 import MyCourses from '../components/MyCourses';
 import PlaylistSection from '../components/PlaylistSection';
 import LikesSection from '../components/LikesSection';
 import CommentSection from '../components/CommentSection';
+import LoadingUI from '../components/LoadingUI';
 
 const dummyUser = {
   name: "account.name",
@@ -50,6 +50,7 @@ export default function Profile() {
     avatar: user.avatar,
     cover: user.cover,
   })
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   const avatarStyle = {
     backgroundImage: `url(${newDetail.avatar})`,
@@ -199,19 +200,31 @@ export default function Profile() {
     checkEmailVerification();
     fetchUserData();
     setTab('about');
-  }, [window.location.pathname]);
+  }, [profileId]);
 
   // For tab configurtion handling
   useEffect(() => {
-      const params = new URLSearchParams(location.search);
-      const tabParam = params.get('tab');
-      if (tabParam) {
-          setTab(tabParam);
-      }
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam) {
+      setTab(tabParam);
+    }
   }, [location.search]);
 
+  setTimeout(() => {
+    setIsPageLoaded(true);
+  }, [1000]);
+
+  if (!isPageLoaded) {
+    return (
+      <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+        <LoadingUI />
+      </main>
+    )
+  }
+
   return (
-    <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
+    <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
       <section className="relative pt-40 pb-24">
         <img
           src={user.cover}

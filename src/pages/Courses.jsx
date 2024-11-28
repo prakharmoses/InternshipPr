@@ -9,6 +9,7 @@ import { useAccount } from '../hooks/useAuth';
 
 // Importing components
 import CourseCard from '../components/CourseCard';
+import LoadingUI from '../components/LoadingUI';
 
 // Import icons
 import { FaFilter, FaChevronDown } from 'react-icons/fa';
@@ -73,6 +74,7 @@ export default function Courses() {
   const [sortedCourses, setSortedCourses] = useState(filteredCourses);
   const [searchedCourses, setSearchedCourses] = useState(sortedCourses);
   const [displayViewMore, setDisplayViewMore] = useState(true);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   // Category filter logic on rendering
   const categoryQuery = searchParams.get('category');
@@ -213,8 +215,20 @@ export default function Courses() {
     }
   }, [searchParams, sortedCourses]);
 
+  setTimeout(() => {
+    setIsPageLoaded(true);
+  }, [2000]);
+
+  if (!isPageLoaded) {
+    return (
+      <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+        <LoadingUI />
+      </main>
+    )
+  }
+
   return (
-    <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[4rem] bg-white dark:bg-black`}>
+    <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
       <section className="py-4">
         <div className='flex flex-col w-[67rem] items-center mx-auto justify-between'>
           <h1 className="text-4xl font-bold text-center mb-8 text-slate-600 dark:text-slate-400">Our Courses</h1>

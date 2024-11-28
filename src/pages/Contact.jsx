@@ -101,7 +101,7 @@ export default function Contact() {
     }, [sent])
 
     return (
-      <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white text-black dark:text-white dark:bg-gray-900`}>
+        <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
         <div className="px-6 py-12 mx-auto w-[70rem]">
           <div>
             <p className="font-medium text-blue-500 dark:text-blue-400">Contact us</p>

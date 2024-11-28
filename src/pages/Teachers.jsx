@@ -8,6 +8,9 @@ import { useSidebar } from '../context/SidebarContext';
 // Import Hooks
 import { useAccount } from '../hooks/useAuth';
 
+// Importing Components
+import LoadingUI from '../components/LoadingUI';
+
 // Importing assets
 import pic2 from '../assets/pic-2.jpg';
 import pic3 from '../assets/pic-3.jpg';
@@ -35,6 +38,7 @@ export default function Teachers() {
     // Defining State
     const [teachersData, setTeachersData] = useState(dummyTutors);
     const [isTutorInvite, setIsTutorInvite] = useState(true);
+    const [isPageLoaded, setIsPageLoaded] = useState(false);
 
     // Defining functions
     useEffect(() => setIsTutorInvite(true), []);
@@ -93,8 +97,20 @@ export default function Teachers() {
         fetchTutors();
     }, []);
 
-    return (
-      <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
+    setTimeout(() => {
+      setIsPageLoaded(true);
+  }, [1000]);
+
+  if (!isPageLoaded) {
+      return (
+          <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+              <LoadingUI />
+          </main>
+      )
+  }
+
+  return (
+      <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
         <section className="p-4">
           <h1 className="text-4xl font-bold mb-8 text-slate-700 dark:text-slate-300 border-b-[0.5px] p-4">Expert Teachers</h1>
 

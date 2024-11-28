@@ -6,6 +6,7 @@ import { useSidebar } from '../context/SidebarContext';
 
 // Importing components
 import { TypewriterEffectSmooth } from "../components/ui/typewriterEffect";
+import LoadingUI from '../components/LoadingUI';
 
 // Import Hooks
 import { useAccount } from '../hooks/useAuth';
@@ -69,6 +70,7 @@ export default function ContentPage() {
   const [comment, setComment] = useState('');
   const [isReplying, setIsReplying] = useState(false);
   const [reply, setReply] = useState('');
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   // Defining functions
   const toggleLike = async () => {
@@ -126,8 +128,9 @@ export default function ContentPage() {
       const data = await response.json();
 
       if (response.status === 201) {
-        setContent({ ...content, comments:
-          data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) })),
+        setContent({
+          ...content, comments:
+            data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) })),
         });
         setComment('');
       } else {
@@ -151,8 +154,9 @@ export default function ContentPage() {
       const data = await response.json();
 
       if (response.status === 201) {
-        setContent({ ...content, comments:
-          data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) })),
+        setContent({
+          ...content, comments:
+            data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) })),
         });
         setReply('');
         setIsReplying(false);
@@ -178,8 +182,8 @@ export default function ContentPage() {
             ...data,
             comments: Array.isArray(data.comments)
               ? data.comments
-                  .map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) }))
-                  .reverse()
+                .map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) }))
+                .reverse()
               : [],
             createdAt: new Date(data.createdAt),
           };
@@ -211,7 +215,7 @@ export default function ContentPage() {
 
     fetchContent();
     fetchIsContentLiked();
-  }, []);
+  }, [contentId]);
 
   // Fetching other content data
   useEffect(() => {
@@ -249,8 +253,20 @@ export default function ContentPage() {
     }
   }, [description]);
 
+  setTimeout(() => {
+    setIsPageLoaded(true);
+  }, [1500]);
+
+  if (!isPageLoaded) {
+    return (
+      <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+        <LoadingUI />
+      </main>
+    )
+  }
+
   return (
-    <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[4rem] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
+    <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
       <div className="flex items-center justify-center">
         <TypewriterEffectSmooth words={[
           {
@@ -284,7 +300,7 @@ export default function ContentPage() {
             <ul className={`${sidebarActive ? 'h-[23.8rem]' : 'h-[29.425rem]'} space-y-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent`}>
               {Array.isArray(otherContent) && otherContent.length > 0 && otherContent.map((othContent, index) => (
                 <Link
-                  onClick={() => window.location.href = `/content/${othContent.id}`}
+                  to={`/content/${othContent.id}`}
                   key={index}
                   className={`flex items-center gap-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 ${othContent.id === contentId && 'bg-gray-200 dark:bg-gray-800'} rounded-md p-2 transition-all`}
                 >
@@ -414,20 +430,20 @@ export default function ContentPage() {
             </article>
             {isReplying && (
               <form className="flex flex-row mb-6 ml-16 py-2 px-4 w-[50%] bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700" onSubmit={() => handlePostCommentReply(views._id)}>
-                  <label for="comment" className="sr-only">Your comment</label>
-                  <textarea
-                    id="comment"
-                    rows="2"
-                    className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
-                    placeholder="Write a comment..."
-                    required
-                    value={reply}
-                    onChange={(e) => setReply(e.target.value)}
-                  ></textarea>
-                  <MdSend
-                    className="text-xl bg-transparent cursor-pointer ml-2 self-end"
-                    onClick={() => handlePostCommentReply(views._id)}
-                  />
+                <label for="comment" className="sr-only">Your comment</label>
+                <textarea
+                  id="comment"
+                  rows="2"
+                  className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                  placeholder="Write a comment..."
+                  required
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
+                ></textarea>
+                <MdSend
+                  className="text-xl bg-transparent cursor-pointer ml-2 self-end"
+                  onClick={() => handlePostCommentReply(views._id)}
+                />
               </form>
             )}
             {Array.isArray(views.reply) && views.reply.length > 0 && views.reply?.map((oneReply, idx) => (

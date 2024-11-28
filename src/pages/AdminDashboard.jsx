@@ -9,12 +9,28 @@ import ChartOne from "../components/charts/ChartOne";
 import ChartTwo from "../components/charts/ChartTwo";
 import ChartThree from "../components/charts/ChartThree";
 import ProductTable from "../components/tables/ProductTable";
+import LoadingUI from "../components/LoadingUI";
 
 export default function AdminDashboard() {
     const { sidebarActive } = useSidebar();
 
+    // Define states
+    const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+    setTimeout(() => {
+        setIsPageLoaded(true);
+    }, [1000]);
+
+    if (!isPageLoaded) {
+        return (
+            <main className={`ml-[18rem] w-[82vw] h-[100vh] pt-[5rem] pb-[7rem] bg-slate-300 dark:bg-black`}>
+                <LoadingUI />
+            </main>
+        )
+    }
+
     return (
-        <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[7rem] bg-slate-50 dark:bg-slate-950`}>
+        <main className={`${sidebarActive && 'ml-[18rem]'} border-gray-500 border-2 h-full pt-[5rem] pb-[7rem] bg-white dark:bg-black`}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5 m-4">
                 <CardDataStats title="Total views" total="$3.456K" rate="0.43%" levelUp>
                     <svg
