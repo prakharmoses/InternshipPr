@@ -79,14 +79,16 @@ const getOtherContentOfCourse = asyncHandler(async (req, res) => {
     const contents = await Content.aggregate([
         { $match: { _id: { $in: courseContent.content } } },
         { $addFields: { likes: { $size: '$likedBy' } } },
-        { $project: {
-            id: '$_id',
-            title: 1,
-            contentImg: 1,
-            likes: 1,
-            createdAt: 1,
-            _id: 0
-        } }
+        {
+            $project: {
+                id: '$_id',
+                title: 1,
+                contentImg: 1,
+                likes: 1,
+                createdAt: 1,
+                _id: 0
+            }
+        }
     ]);
 
     // Check if there are contents
@@ -194,7 +196,7 @@ const isContentLiked = asyncHandler(async (req, res) => {
 
     // Check if the user has already liked the content
     const index = content.likedBy.findIndex(item => item.toString() === req.userId.toString());
-    
+
     res.status(200).json(index !== -1 ? true : false);
 })
 
@@ -296,7 +298,7 @@ const updateContent = asyncHandler(async (req, res) => {
     updatedContent.description = description ? description : updatedContent.description;
     updatedContent.course = course ? course : updatedContent.course;
     await updatedContent.save();
-    
+
     res.status(200).json(updatedContent);
 })
 
@@ -453,6 +455,116 @@ const addCommentReply = asyncHandler(async (req, res) => {
     })
 })
 
+// @desc   Get liked content
+// @route  GET /contents/getLikedContent/:userId
+// @access Private
+const getLikedContent = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+
+    // Check if userId is empty
+    if (!userId) {
+        res.status(400);
+        throw new Error('User ID is required');
+    }
+
+    // Check if the user exists
+    const user = await User.findById(userId).exec();
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Get the liked content
+    // Get the liked content
+    const likedContent = await Content.aggregate([
+        {
+            $match: { _id: { $in: user.likes } } // Filter documents in `Content` collection
+        },
+        {
+            $lookup: {
+                from: 'users', // The name of the User collection in the database
+                localField: 'tutor', // Field in `Content` collection to match
+                foreignField: '_id', // Field in `User` collection to match
+                as: 'tutorDetails' // Name for the resulting array
+            }
+        },
+        {
+            $unwind: '$tutorDetails' // Unwind the array to access individual user details
+        },
+        {
+            $project: {
+                id: '$_id', // Rename `_id` to `id`
+                title: 1, // Include the `title` field
+                image: '$contentImg', // Include and rename `contentImg` to `image`
+                profileId: '$tutor', // Include the `tutor` field as `profileId`
+                profileImg: '$tutorDetails.avatar', // Include the `avatar` field from `User`
+                _id: 0 // Exclude the `_id` field
+            }
+        }
+    ]);
+
+
+    // Check if there are liked content
+    if (!likedContent.length) {
+        res.status(404);
+        throw new Error('No liked content found');
+    }
+
+    res.status(200).json(likedContent);
+})
+
+// @desc   Get commented content
+// @route  GET /contents/getCommentedContent/:userId
+// @access Private
+const getCommentedContent = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+
+    // Check if userId is empty
+    if (!userId) {
+        res.status(400);
+        throw new Error('User ID is required');
+    }
+
+    // Check if the user exists
+    const user = await User.findById(userId).exec();
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Get the commented content
+    const commentedContent = await Content.aggregate([
+        { $match: { _id: { $in: user.comments } } },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'tutor',
+                foreignField: '_id',
+                as: 'tutorDetails'
+            }
+        },
+        { $unwind: '$tutorDetails' },
+        {
+            $project: {
+                id: '$_id',
+                title: 1,
+                image: '$contentImg',
+                profileId: '$tutor',
+                profileImg: '$tutorDetails.avatar',
+                _id: 0
+            }
+        }
+    ]);
+
+    // Check if there are commented content
+    if (!commentedContent.length) {
+        res.status(404);
+        throw new Error('No commented content found');
+    }
+
+    res.status(200).json(commentedContent);
+})
+
 module.exports = {
     getContent,
     getOtherContentOfCourse,
@@ -463,5 +575,7 @@ module.exports = {
     updateContent,
     deleteContent,
     addComment,
-    addCommentReply
+    addCommentReply,
+    getLikedContent,
+    getCommentedContent
 }

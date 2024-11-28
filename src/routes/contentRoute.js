@@ -18,5 +18,7 @@ router.patch('/update', verifyJWT, contentController.updateContent)
 router.delete('/delete', verifyJWT, contentController.deleteContent)
 router.patch('/addComment', verifyJWT, contentController.addComment)
 router.patch('/addCommentReply', verifyJWT, contentController.addCommentReply)
+router.get('/getLikedContent/:userId', verifyJWT, contentController.getLikedContent)
+router.get('/getCommentedContent/:userId', verifyJWT, contentController.getCommentedContent)
 
 module.exports = router
