@@ -393,39 +393,64 @@ const addComment = asyncHandler(async (req, res) => {
 // @route  PATCH /contents/addCommentReply
 // @access Private
 const addCommentReply = asyncHandler(async (req, res) => {
-    const { contentId, commentId, userId, userName, userAvatar, comment } = req.body;
+    const { contentId, commentId, comment } = req.body;
 
     // Check if all the fields are given
-    if (!contentId || !commentId || !userId || !userName || !userAvatar || !comment) {
+    if (!contentId || !commentId || !comment) {
         res.status(400);
-        throw new Error('Content ID, comment ID, user ID, user name, user avatar and comment are required');
+        throw new Error('Content ID, comment ID, user ID and comment are required');
     }
 
     // Check if the content exists
-    const foundContent = await Content.findById(content).exec();
+    const foundContent = await Content.findById(contentId).exec();
     if (!foundContent) {
         res.status(404);
         throw new Error('Content not found');
     }
 
     // Check if the comment exists
-    const foundComment = foundContent.comment.find(item => item._id === commentId);
+    const foundComment = foundContent.comments.find(item => item._id.toString() === commentId.toString());
     if (!foundComment) {
         res.status(404);
         throw new Error('Comment not found');
     }
 
+    // Check if the user exists
+    const user = await User.findById(req.userId).exec();
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
     // Add comment reply
     const newReply = {
-        userId,
-        userName,
-        userAvatar,
+        userId: req.userId,
+        userName: user.name,
+        userAvatar: user.avatar,
         comment,
     }
     foundComment.reply.push(newReply);
     await foundContent.save();
 
-    res.status(200).json({ content: foundContent, commentId: foundComment._id });
+    // Add comment reply content entry into user's comments array
+    user.comments.push(foundContent._id);
+    await user.save();
+
+    // Notify the person to commented on the reply via email and send the response
+    const firstCommenter = await User.findById(foundComment.userId).exec();
+    const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: firstCommenter.email,
+        subject: `Reply from ${user.name} on ${foundContent.title}`,
+        text: `Hello ${firstCommenter.name},\n\nYou have a new reply on your comment by ${user.name} on ${foundContent.title}.\n\nReply: ${comment}\n\nRegards,\nAngirasoft`
+    }
+
+    await transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error sending email', error: err });
+        }
+        return res.status(201).json({ comments: foundContent.comments });
+    })
 })
 
 module.exports = {
