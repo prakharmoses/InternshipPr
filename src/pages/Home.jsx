@@ -310,7 +310,7 @@ export default function Home() {
                 thumbImage={course.thumbImg}
                 videoCount={course.videoCount}
                 title={course.title}
-                link={course.link}
+                link={`/course/${course.courseId}`}
               />
             ))}
           </div>

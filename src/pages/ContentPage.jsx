@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom';
-import { IoIosHeartEmpty, IoMdHeart } from "react-icons/io";
 
 // Importing context
 import { useSidebar } from '../context/SidebarContext';
@@ -10,6 +9,10 @@ import { TypewriterEffectSmooth } from "../components/ui/typewriterEffect";
 
 // Import Hooks
 import { useAccount } from '../hooks/useAuth';
+
+// Import icons
+import { IoIosHeartEmpty, IoMdHeart } from "react-icons/io";
+import { MdSend } from "react-icons/md";
 
 // Import assets
 import thumb2 from '../assets/thumb-2.png';
@@ -25,14 +28,14 @@ const dummyContent = {
   course: 1,
   comments: [
     {
-      userId: 1, user: 'John Doe', comment: 'Very straight-to-point article. Really worth time reading. Thank you! But tools are just the instruments for the UX designers. The knowledge of the design tools are as important as the creation of the design strategy.!', createdAt: '2022-10-21', userImg: 'https://flowbite.com/docs/images/people/profile-picture-1.jpg', reply: [{
+      _id: 1, userId: 1, user: 'John Doe', comment: 'Very straight-to-point article. Really worth time reading. Thank you! But tools are just the instruments for the UX designers. The knowledge of the design tools are as important as the creation of the design strategy.!', createdAt: '2022-10-21', userImg: 'https://flowbite.com/docs/images/people/profile-picture-1.jpg', reply: [{
         userId: 2, user: 'Jane Doe', comment: 'Much appreciated! Glad you liked it ☺️', createdAt: '2022-10-22', userImg: 'https://flowbite.com/docs/images/people/profile-picture-2.jpg'
       }]
     },
-    { userId: 2, user: 'Jane Doe', comment: 'Awesome!', createdAt: '2022-10-22', userImg: 'https://flowbite.com/docs/images/people/profile-picture-2.jpg' },
-    { userId: 3, user: 'Joe Doe', comment: 'Nice!', createdAt: '2022-10-23', userImg: 'https://flowbite.com/docs/images/people/profile-picture-3.jpg' },
-    { userId: 4, user: 'Jack Doe', comment: 'Good!', createdAt: '2022-10-24', userImg: 'https://flowbite.com/docs/images/people/profile-picture-4.jpg' },
-    { userId: 5, user: 'Jill Doe', comment: 'Excellent!', createdAt: '2022-10-25', userImg: 'https://flowbite.com/docs/images/people/profile-picture-5.jpg' },
+    { _id: 2, userId: 2, user: 'Jane Doe', comment: 'Awesome!', createdAt: '2022-10-22', userImg: 'https://flowbite.com/docs/images/people/profile-picture-2.jpg' },
+    { _id: 3, userId: 3, user: 'Joe Doe', comment: 'Nice!', createdAt: '2022-10-23', userImg: 'https://flowbite.com/docs/images/people/profile-picture-3.jpg' },
+    { _id: 4, userId: 4, user: 'Jack Doe', comment: 'Good!', createdAt: '2022-10-24', userImg: 'https://flowbite.com/docs/images/people/profile-picture-4.jpg' },
+    { _id: 5, userId: 5, user: 'Jill Doe', comment: 'Excellent!', createdAt: '2022-10-25', userImg: 'https://flowbite.com/docs/images/people/profile-picture-5.jpg' },
   ]
 }
 
@@ -120,10 +123,9 @@ export default function ContentPage() {
       const data = await response.json();
 
       if (response.status === 201) {
-        setContent({ ...content, comments: () => {
-          const comments = data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) }));
-          return comments.reverse();
-        } });
+        setContent({ ...content, comments:
+          data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) })),
+        });
         setComment('');
       } else {
         alert(`Error posting comment: ${data.message}`);
@@ -131,6 +133,32 @@ export default function ContentPage() {
       }
     } catch (error) {
       console.error('Error posting comment:', error);
+    }
+  }
+
+  // Handling post comment reply
+  const handlePostCommentReply = async (commentId) => {
+    try {
+      const commentBody = {
+        contentId: contentId,
+        commentId: commentId,
+        comment: reply
+      }
+      const response = await callBackendApi(`/content/addCommentReply`, 'PATCH', commentBody);
+      const data = await response.json();
+
+      if (response.status === 201) {
+        setContent({ ...content, comments:
+          data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) })),
+        });
+        setReply('');
+        setIsReplying(false);
+      } else {
+        alert(`Error posting comment reply: ${data.message}`);
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error('Error posting comment reply:', error);
     }
   }
 
@@ -145,11 +173,12 @@ export default function ContentPage() {
           setDescription(data.description);
           const updatedContent = {
             ...data,
-            comments: Array.isArray(data.comments) ? () => {
-              const comments = data.comments.map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) }));
-              return comments.reverse();
-            } : [],
-            createdAt: new Date(data.createdAt)
+            comments: Array.isArray(data.comments)
+              ? data.comments
+                  .map(comment => ({ ...comment, createdAt: new Date(comment.createdAt) }))
+                  .reverse()
+              : [],
+            createdAt: new Date(data.createdAt),
           };
           setContent(updatedContent);
         } else {
@@ -167,7 +196,6 @@ export default function ContentPage() {
         const data = await response.json();
 
         if (response.status === 200) {
-          console.log("The likes status of the content is: ", data);
           setLikedByUser(data);
         } else {
           alert(`Failed to fetch like status. Error: ${data.message}`);
@@ -336,47 +364,33 @@ export default function ContentPage() {
             <article key={_} className="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
               <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                  <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
+                  <Link
+                    to={`/profile/${views.userId}`}
+                    className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold"
+                  >
                     <img
                       className="mr-2 w-6 h-6 rounded-full"
                       src={views.userAvatar}
                       alt={views.userName}
-                    />{views.userName}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime={views.createdAt instanceof Date ? views.createdAt.toDateString() : views.createdAt}
-                    title={views.createdAt instanceof Date ? views.createdAt.toDateString() : views.createdAt}>{views.createdAt instanceof Date ? views.createdAt.toDateString() : views.createdAt}</time></p>
+                    />
+                    {views.userName}
+                  </Link>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <time
+                      pubdate
+                      datetime={views.createdAt instanceof Date ? views.createdAt.toDateString() : views.createdAt}
+                      title={views.createdAt instanceof Date ? views.createdAt.toDateString() : views.createdAt}
+                    >{views.createdAt instanceof Date ? views.createdAt.toDateString() : views.createdAt}</time>
+                  </p>
                 </div>
-                {/* <button id="dropdownComment1Button" data-dropdown-toggle="dropdownComment1"
-                  className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                  type="button">
-                  <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
-                    <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                  </svg>
-                  <span className="sr-only">Comment settings</span>
-                </button> */}
-                {/* <!-- Dropdown menu --> */}
-                {/* <div id="dropdownComment1"
-                  className="hidden z-10 w-36 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                  <ul className="py-1 text-sm text-gray-700 dark:text-gray-200"
-                    aria-labelledby="dropdownMenuIconHorizontalButton">
-                    <li>
-                      <a href="#"
-                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Remove</a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Report</a>
-                    </li>
-                  </ul>
-                </div> */}
               </footer>
               <p className="text-gray-500 dark:text-gray-400">{views.comment}</p>
               <div className="flex items-center mt-4 space-x-4">
-                <button type="button"
-                  className="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
+                <button
+                  type="button"
+                  className="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium"
+                  onClick={() => setIsReplying(!isReplying)}
+                >
                   <svg className="mr-1.5 w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z" />
                   </svg>
@@ -384,60 +398,41 @@ export default function ContentPage() {
                 </button>
               </div>
             </article>
+            {isReplying && (
+              <form className="flex flex-row mb-6 ml-16 py-2 px-4 w-[50%] bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700" onSubmit={() => handlePostCommentReply(views._id)}>
+                  <label for="comment" className="sr-only">Your comment</label>
+                  <textarea
+                    id="comment"
+                    rows="2"
+                    className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                    placeholder="Write a comment..."
+                    required
+                    value={reply}
+                    onChange={(e) => setReply(e.target.value)}
+                  ></textarea>
+                  <MdSend
+                    className="text-xl bg-transparent cursor-pointer ml-2 self-end"
+                    onClick={() => handlePostCommentReply(views._id)}
+                  />
+              </form>
+            )}
             {Array.isArray(views.reply) && views.reply.length > 0 && views.reply?.map((oneReply, idx) => (
-              <article key={idx} className="p-6 mb-3 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
+              <article key={idx} className="px-4 mb-3 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
                 <footer className="flex justify-between items-center mb-2">
-                  <div className="flex items-center">
+                  <Link
+                    className="flex items-center"
+                    to={`/profile/${oneReply.userId}`}
+                  >
                     <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
                       <img
                         className="mr-2 w-6 h-6 rounded-full"
-                        src={oneReply.userImg}
-                        alt={oneReply.user}
+                        src={oneReply.userAvatar}
+                        alt={oneReply.userName}
                       />
-                      {oneReply.user}</p>
-                    {/* <p className="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime={oneReply.date}
-                      title={oneReply.date}>{oneReply.date}</time></p> */}
-                  </div>
-                  {/* <button id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
-                    className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-40 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                    type="button">
-                    <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
-                      <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                    </svg>
-                    <span className="sr-only">Comment settings</span>
-                  </button> */}
-                  {/* <!-- Dropdown menu --> */}
-                  {/* <div id="dropdownComment2"
-                  className="hidden z-10 w-36 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                  <ul className="py-1 text-sm text-gray-700 dark:text-gray-200"
-                    aria-labelledby="dropdownMenuIconHorizontalButton">
-                    <li>
-                      <a href="#"
-                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Remove</a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Report</a>
-                    </li>
-                  </ul>
-                </div> */}
+                      {oneReply.userName}</p>
+                  </Link>
                 </footer>
                 <p className="text-gray-500 dark:text-gray-400">{oneReply.comment}</p>
-                <div className="flex items-center mt-4 space-x-4">
-                  <button
-                    type="button"
-                    className="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium"
-                  >
-                    <svg className="mr-1.5 w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" strokeWidth="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z" />
-                    </svg>
-                    Reply
-                  </button>
-                </div>
               </article>
             ))}
           </>))}
