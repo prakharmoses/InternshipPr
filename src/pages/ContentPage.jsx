@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom';
 
 // Importing context
@@ -56,6 +56,9 @@ export default function ContentPage() {
   const { sidebarActive } = useSidebar();
   const { contentId } = useParams();
   const { account, callBackendApi } = useAccount();
+
+  // Define ref
+  const textareaRef = useRef(null);
 
   // Defining State
   const [content, setContent] = useState(dummyContent);
@@ -236,6 +239,16 @@ export default function ContentPage() {
     setIsYTvideo(content.content.startsWith('https://www.youtube.com/') || content.content.startsWith('https://youtu.be/'));
   }, [content]);
 
+  // Define functions using useEffect
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to make it shrink before resizing
+      textareaRef.current.style.height = 'auto';
+      // Set height to the scroll height
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [description]);
+
   return (
     <main className={`${sidebarActive && 'ml-[18rem]'} border-red-500 border-2 h-full pt-[5rem] pb-[4rem] bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
       <div className="flex items-center justify-center">
@@ -258,7 +271,7 @@ export default function ContentPage() {
               Your browser does not support the video tag.
             </video> :
             <iframe
-              src="https://www.youtube.com/embed/RB1uDVnhVq0?si=d0DlD-AjqmaPlnEF"
+              src={content.content}
               title="YouTube video player"
               frameborder="40% "
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen; web-share"
@@ -271,7 +284,7 @@ export default function ContentPage() {
             <ul className={`${sidebarActive ? 'h-[23.8rem]' : 'h-[29.425rem]'} space-y-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent`}>
               {Array.isArray(otherContent) && otherContent.length > 0 && otherContent.map((othContent, index) => (
                 <Link
-                  to={`/content/${othContent.id}`}
+                  onClick={() => window.location.href = `/content/${othContent.id}`}
                   key={index}
                   className={`flex items-center gap-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 ${othContent.id === contentId && 'bg-gray-200 dark:bg-gray-800'} rounded-md p-2 transition-all`}
                 >
@@ -299,7 +312,7 @@ export default function ContentPage() {
         </div>
 
         <section>
-          <div className="flex items-center mt-6 mb-8 border-b justify-between">
+          <div className="flex items-center mt-6 border-b justify-between">
             <div className='flex items-center pb-6  gap-10'>
               <p className="date text-xl">
                 <i className="fas fa-calendar mr-4 text-main-color"></i>
@@ -319,6 +332,7 @@ export default function ContentPage() {
             </button>
           </div>
           <textarea
+            ref={textareaRef}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             onBlur={handleContentDescriptionChange}
@@ -334,7 +348,7 @@ export default function ContentPage() {
         </section>
       </div>
 
-      <section className="bg-white dark:bg-gray-900 py-8 lg:py-16 antialiased">
+      <section className="bg-white dark:bg-gray-900 py-8 antialiased">
         <div className="max-w-[70rem] mx-auto px-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion ({content.comments.length})</h2>

@@ -198,7 +198,8 @@ export default function Profile() {
 
     checkEmailVerification();
     fetchUserData();
-  }, []);
+    setTab('about');
+  }, [window.location.pathname]);
 
   // For tab configurtion handling
   useEffect(() => {
@@ -259,7 +260,7 @@ export default function Profile() {
           </div>
         )}
         {profileId === account.id && tab === 'likes' && <LikesSection userId={account.id} />}
-        {profileId === account.id && tab === 'comment' && <CommentSection comments={account.id} />}
+        {profileId === account.id && tab === 'comment' && <CommentSection userId={account.id} />}
         {tab === 'playlist' && <PlaylistSection userId={account.id} profileId={profileId} />}
         {profileId === account.id && tab === 'mycourses' && account.roles.includes('tutor') && <MyCourses />}
       </section>
