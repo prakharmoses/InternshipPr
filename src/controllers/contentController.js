@@ -253,6 +253,7 @@ const createContent = asyncHandler(async (req, res) => {
 
     // Add the content to the course
     foundCourse.content.push(newContent._id);
+    foundCourse.status = 'ongoing';
     await foundCourse.save();
 
     res.status(201).json(newContent._id);
