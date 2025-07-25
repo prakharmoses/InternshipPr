@@ -7,6 +7,9 @@ import { useSidebar } from "../context/SidebarContext";
 // Import hooks
 import { useAccount } from "../hooks/useAuth";
 
+// Import components
+import ElementLoading from "./ElementLoading";
+
 const dummyPlaylist = [
     { id: 1, title: 'JavaScript', image: 'https://img.icons8.com/color/452/javascript.png', profileImg: 'https://img.icons8.com/color/452/like' },
     { id: 2, title: 'React', image: 'https://img.icons8.com/color/452/react-native.png', profileImg: 'https://img.icons8.com/color/452/like' },
@@ -26,6 +29,7 @@ const PlaylistSection = ({ userId, profileId }) => {
 
     // Define states
     const [playlistList, setPlaylistList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Remove playlist from the list
     const handleRemovePlaylist = async (playlistId) => {
@@ -65,6 +69,16 @@ const PlaylistSection = ({ userId, profileId }) => {
 
         fetchPlaylist();
     }, [profileId, callBackendApi]);
+
+    setTimeout(() => {
+        setIsLoading(false);
+    }, [1000]);
+
+    if (isLoading) {
+        return (
+            <ElementLoading />
+        )
+    }
 
     return (
         <div className={`grid ${sidebarActive ? 'grid-cols-3 gap-2' : 'grid-cols-4 gap-[12rem]'} gap-y-6 max-w-6xl my-16 mx-10`}>

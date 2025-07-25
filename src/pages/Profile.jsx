@@ -213,7 +213,7 @@ export default function Profile() {
 
   setTimeout(() => {
     setIsPageLoaded(true);
-  }, [1000]);
+  }, [500]);
 
   if (!isPageLoaded) {
     return (

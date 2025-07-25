@@ -247,7 +247,7 @@ export default function ContentPage() {
   useEffect(() => {
     if (textareaRef.current) {
       // Reset height to make it shrink before resizing
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = 'fit-content';
       // Set height to the scroll height
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
@@ -296,7 +296,7 @@ export default function ContentPage() {
             ></iframe>
           }
           <div className={`${sidebarActive ? 'w-[25rem] h-[28.125rem]' : 'w-[60rem] h-[33.75rem]'} md:w-[28%] bg-slate-100 dark:bg-gray-900 border dark:border-2 rounded-lg border-gray-300 dark:border-gray-700 p-4`}>
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">This Course</h2>
+            <Link to={`/course/${content.course}`} className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">This Course</Link>
             <ul className={`${sidebarActive ? 'h-[23.8rem]' : 'h-[29.425rem]'} space-y-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent`}>
               {Array.isArray(otherContent) && otherContent.length > 0 && otherContent.map((othContent, index) => (
                 <Link
@@ -359,7 +359,7 @@ export default function ContentPage() {
                 e.target.blur();
               }
             }}
-            className={`py-2 mt-4 overflow-hidden min-h-[3rem] bg-transparent w-full text-lg px-2 text-gray-600 dark:text-gray-400 leading-8`}
+            className={`py-2 mt-4 overflow-hidden min-h-[4rem] h-[fit-content] bg-transparent w-full text-lg px-2 text-gray-600 dark:text-gray-400 leading-8`}
           />
         </section>
       </div>

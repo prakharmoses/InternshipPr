@@ -9,6 +9,7 @@ import { useAccount } from "../hooks/useAuth";
 
 // Import components
 import Modal from "./Modal";
+import ElementLoading from "./ElementLoading";
 
 // Import icons
 import { TiPlus } from "react-icons/ti";
@@ -90,6 +91,7 @@ const MyCourses = () => {
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [thumbnail, setThumbnail] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     // Define functions
     const handleCreateCourse = async (e) => {
@@ -121,6 +123,7 @@ const MyCourses = () => {
                 ]);
             } else {
                 const data = await response.json();
+                alert(`Error in creating the course: ${data.message}`);
                 throw new Error('Create course error:', data.message);
             }
         } catch (error) {
@@ -149,6 +152,7 @@ const MyCourses = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
+                setIsLoading(true);
                 const response = await callBackendApi(`/tutors/getCourses/${account.id}`, 'GET', null);
 
                 if (response.status === 206) {
@@ -182,6 +186,7 @@ const MyCourses = () => {
 
     // Handling filter functionality
     useEffect(() => {
+        setIsLoading(true);
         const filtered = courses.filter(course => {
             let isValid = true;
 
@@ -199,6 +204,7 @@ const MyCourses = () => {
 
     // Handling sort functionality
     useEffect(() => {
+        setIsLoading(true);
         if (sortType === 'date') {
             setSortedCourses([...filteredCourses].sort((a, b) => new Date(b.startDate) - new Date(a.startDate)));
         } else if (sortType === 'alpha') {
@@ -216,6 +222,7 @@ const MyCourses = () => {
 
     // Handling search functionality
     useEffect(() => {
+        setIsLoading(true);
         const searchQuery = searchParams.get('search');
         if (searchQuery && Array.isArray(sortedCourses) && sortedCourses.length > 0) {
             const searched = sortedCourses.filter((course) =>
@@ -223,10 +230,22 @@ const MyCourses = () => {
                 course.description.toLowerCase().includes(searchQuery.toLowerCase())
             );
             setSearchedCourses(searched);
+            setIsLoading(false);
         } else {
             setSearchedCourses(sortedCourses);
+            setIsLoading(false);
         }
     }, [searchParams, sortedCourses]);
+
+    setTimeout(() => {
+        setIsLoading(false);
+    }, [1000]);
+
+    if (isLoading) {
+        return (
+            <ElementLoading />
+        )
+    }
 
     return (
         <main className="mx-auto px-4 sm:px-8 mt-14">
@@ -242,7 +261,7 @@ const MyCourses = () => {
                                 onChange={(e) => setSelectedFilters({ ...selectedFilters, [filter.id]: e.target.value })}
                             >
                                 {filter.options.map((option, index) => (
-                                    <option key={index} value={option.id}>{option.name}</option>
+                                    <option key={index} value={option.id} selected={option.id === selectedFilters[filter.id]}>{option.name}</option>
                                 ))}
                             </select>
                         </div>

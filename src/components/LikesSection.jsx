@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 // Import Hooks
 import { useAccount } from '../hooks/useAuth';
 
+// Import components
+import ElementLoading from './ElementLoading';
+
 const dummyLikes = [
     { id: 1, title: 'JavaScript', image: 'https://img.icons8.com/color/452/javascript.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 1 },
     { id: 2, title: 'React', image: 'https://img.icons8.com/color/452/react-native.png', profileImg: 'https://img.icons8.com/color/452/like', profileId: 2 },
@@ -22,6 +25,7 @@ const LikesSection = ({ userId }) => {
     
     // Define states
     const [likesList, setLikesList] = useState(dummyLikes);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Fetching likes list
     useEffect(() => {
@@ -43,6 +47,16 @@ const LikesSection = ({ userId }) => {
 
         fetchLikesList();
     }, [])
+    
+    setTimeout(() => {
+        setIsLoading(false);
+    }, [1000]);
+
+    if (isLoading) {
+        return (
+            <ElementLoading />
+        )
+    }
     
     return (
         <div className="grid grid-cols-12 gap-2 gap-y-6 max-w-6xl my-16 mx-10">

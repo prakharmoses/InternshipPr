@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 // Import Hooks
 import { useAccount } from '../hooks/useAuth';
 
+// Import components
+import ElementLoading from './ElementLoading';
+
 const dummyComments = [
     { id: 1, title: 'Great work!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 1 },
     { id: 2, title: 'Keep it up!', image: 'https://img.icons8.com/color/452/like', profileImg: 'https://img.icons8.com/color/452/like', profileId: 2 },
@@ -22,6 +25,7 @@ const CommentSection = ({ userId }) => {
 
     // Define states
     const [commentList, setCommentList] = useState(dummyComments);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Fetching comments list
     useEffect(() => {
@@ -43,6 +47,16 @@ const CommentSection = ({ userId }) => {
 
         fetchCommentsList();
     }, [])
+
+    setTimeout(() => {
+        setIsLoading(false);
+    }, [1000]);
+
+    if (isLoading) {
+        return (
+            <ElementLoading />
+        )
+    }
 
     return (
         <div className="grid grid-cols-12 gap-2 gap-y-6 max-w-6xl my-16 mx-10">
